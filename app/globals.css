@@ -1,0 +1,261 @@
+@import "tailwindcss";
+
+/* ===== VITALIS AI - VOID BLACK THEME ===== */
+
+:root {
+  /* Core Colors */
+  --void-black: #000000;
+  --void-deep: #0a0a0a;
+  --void-surface: #111111;
+  
+  /* Glass Effect */
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-hover: rgba(255, 255, 255, 0.06);
+  
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  
+  /* Accent Gradients */
+  --emerald-start: #10b981;
+  --emerald-end: #059669;
+  --violet-start: #8b5cf6;
+  --violet-end: #7c3aed;
+  
+  /* Functional */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  
+  /* Spacing */
+  --sidebar-width: 280px;
+  --bottom-nav-height: 72px;
+}
+
+@theme inline {
+  --color-void-black: var(--void-black);
+  --color-void-deep: var(--void-deep);
+  --color-void-surface: var(--void-surface);
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+  --color-glass-hover: var(--glass-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-emerald-start: var(--emerald-start);
+  --color-emerald-end: var(--emerald-end);
+  --color-violet-start: var(--violet-start);
+  --color-violet-end: var(--violet-end);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--void-black);
+  color: var(--text-primary);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Void Background with Subtle Texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 50% 0%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 0% 100%, rgba(16, 185, 129, 0.02) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.02) 0%, transparent 30%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Glass Card Effect */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  transition: all 0.2s ease;
+}
+
+.glass-card:hover {
+  background: var(--glass-hover);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Ghost Input */
+.ghost-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  padding: 12px 0;
+  font-size: 16px;
+  width: 100%;
+  transition: border-color 0.2s ease;
+  min-height: 44px;
+}
+
+.ghost-input:focus {
+  outline: none;
+  border-bottom-color: var(--emerald-start);
+}
+
+.ghost-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Emerald Gradient */
+.gradient-emerald {
+  background: linear-gradient(135deg, var(--emerald-start), var(--emerald-end));
+}
+
+.text-gradient-emerald {
+  background: linear-gradient(135deg, var(--emerald-start), var(--emerald-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Violet Gradient */
+.gradient-violet {
+  background: linear-gradient(135deg, var(--violet-start), var(--violet-end));
+}
+
+.text-gradient-violet {
+  background: linear-gradient(135deg, var(--violet-start), var(--violet-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow Effects */
+.glow-emerald {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3), 0 0 40px rgba(16, 185, 129, 0.1);
+}
+
+.glow-violet {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Touch Target */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Monospace for AI text */
+.font-mono-ai {
+  font-family: var(--font-geist-mono), 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Animation Utilities */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+/* Streak Grid Cell */
+.streak-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.streak-cell.active-low {
+  background: rgba(16, 185, 129, 0.3);
+}
+
+.streak-cell.active-medium {
+  background: rgba(16, 185, 129, 0.6);
+}
+
+.streak-cell.active-high {
+  background: var(--emerald-start);
+}
+
+/* Timeline styling */
+.timeline-line {
+  position: absolute;
+  left: 12px;
+  top: 24px;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--glass-border), transparent);
+}
+
+.timeline-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--glass-border);
+  position: relative;
+  z-index: 1;
+}
+
+.timeline-dot.emerald {
+  background: var(--emerald-start);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.timeline-dot.violet {
+  background: var(--violet-start);
+  box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+}
+
+/* Holographic Scan Animation */
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(2500%); }
+}
+
+.animate-scan {
+  animation: scan 3s linear infinite;
+}
