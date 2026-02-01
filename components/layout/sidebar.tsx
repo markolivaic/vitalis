@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: sidebar.tsx
  * Description: Desktop sidebar navigation component with collapsible state.
  */

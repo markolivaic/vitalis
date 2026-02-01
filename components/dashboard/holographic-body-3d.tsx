@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: holographic-body-3d.tsx
  * Description: 3D holographic human body visualization with muscle fatigue status.
  */

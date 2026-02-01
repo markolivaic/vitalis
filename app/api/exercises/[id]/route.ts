@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: route.ts
  * Description: API endpoints for single exercise operations (GET, PUT, PATCH, DELETE).
  */
@@ -38,6 +39,16 @@ export async function PUT(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const { id } = await params;
     const body = await req.json();
@@ -122,6 +133,16 @@ export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role !== "admin") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
     const { id } = await params;
     await prisma.exercise.delete({

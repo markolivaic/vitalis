@@ -1,10 +1,52 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: ai.service.ts
  * Description: Rule-based AI engine for generating health insights and recommendations.
  */
 
 import type { AIInsight, AIContext, Workout, BodyStatus } from "@/lib/types";
 import { generateId } from "@/lib/utils";
+
+// Nutrition Thresholds
+const NUTRITION_THRESHOLDS = {
+  PROTEIN_LOW_RATIO: 0.7,
+  PROTEIN_VERY_LOW_RATIO: 0.6,
+  PROTEIN_GOOD_RATIO: 0.8,
+  PROTEIN_TARGET_MIN: 0.9,
+  PROTEIN_TARGET_MAX: 1.1,
+  CALORIE_DEFICIT_SEVERE: 0.5,
+  CALORIE_DEFICIT_MODERATE: 0.7,
+  CALORIE_EXCESS_THRESHOLD: 1.15,
+} as const;
+
+// Workout Progression Thresholds
+const WORKOUT_THRESHOLDS = {
+  VOLUME_INCREASE_RATIO: 1.05,
+  VOLUME_ABOVE_AVERAGE_RATIO: 1.1,
+  DAYS_SINCE_WORKOUT_WARNING: 3,
+  CONSECUTIVE_DAYS_WARNING: 5,
+  CONSECUTIVE_DAYS_MODERATE: 3,
+  RECENT_WORKOUT_WINDOW_DAYS: 7,
+  EXTENDED_WORKOUT_WINDOW_DAYS: 14,
+  MAX_CONSECUTIVE_CHECK_DAYS: 14,
+} as const;
+
+// Recovery Score Penalties
+const RECOVERY_PENALTIES = {
+  BASE_SCORE: 100,
+  CONSECUTIVE_5_DAYS: 20,
+  CONSECUTIVE_3_DAYS: 10,
+  PROTEIN_VERY_LOW: 15,
+  PROTEIN_LOW: 10,
+  NO_NUTRITION_DATA: 5,
+  CALORIE_DEFICIT_MUSCLE_GOAL: 10,
+} as const;
+
+// Time Thresholds (in hours)
+const TIME_THRESHOLDS = {
+  FATIGUED_WINDOW_HOURS: 24,
+  RECOVERING_WINDOW_HOURS: 48,
+} as const;
 
 interface RuleCondition {
   check: (context: AIContext) => boolean;
@@ -17,7 +59,7 @@ const rules: RuleCondition[] = [
   {
     check: (ctx) => {
       if (!ctx.todayNutrition) return false;
-      return ctx.todayNutrition.totalProtein < ctx.user.proteinTarget * 0.7;
+      return ctx.todayNutrition.totalProtein < ctx.user.proteinTarget * NUTRITION_THRESHOLDS.PROTEIN_LOW_RATIO;
     },
     message: "Protein intake low. Consider adding a shake or lean protein source.",
     type: "warning",
@@ -26,7 +68,7 @@ const rules: RuleCondition[] = [
   {
     check: (ctx) => {
       if (!ctx.todayNutrition) return false;
-      return ctx.todayNutrition.totalCalories < ctx.user.calorieTarget * 0.5;
+      return ctx.todayNutrition.totalCalories < ctx.user.calorieTarget * NUTRITION_THRESHOLDS.CALORIE_DEFICIT_SEVERE;
     },
     message: "You're in a significant caloric deficit today. Don't forget to fuel properly.",
     type: "warning",
@@ -35,7 +77,7 @@ const rules: RuleCondition[] = [
   {
     check: (ctx) => {
       if (!ctx.todayNutrition) return false;
-      return ctx.todayNutrition.totalCalories > ctx.user.calorieTarget * 1.15;
+      return ctx.todayNutrition.totalCalories > ctx.user.calorieTarget * NUTRITION_THRESHOLDS.CALORIE_EXCESS_THRESHOLD;
     },
     message: "Calorie target exceeded. Consider a lighter dinner or extra cardio.",
     type: "tip",
@@ -45,7 +87,7 @@ const rules: RuleCondition[] = [
     check: (ctx) => {
       if (!ctx.todayNutrition) return false;
       const proteinRatio = ctx.todayNutrition.totalProtein / ctx.user.proteinTarget;
-      return proteinRatio >= 0.9 && proteinRatio <= 1.1;
+      return proteinRatio >= NUTRITION_THRESHOLDS.PROTEIN_TARGET_MIN && proteinRatio <= NUTRITION_THRESHOLDS.PROTEIN_TARGET_MAX;
     },
     message: "Protein intake on point! Great job hitting your macros.",
     type: "achievement",
@@ -55,12 +97,12 @@ const rules: RuleCondition[] = [
     check: (ctx) => {
       if (ctx.recentWorkouts.length < 2) return false;
       const thisWeekVolume = ctx.recentWorkouts
-        .filter((w) => isWithinDays(w.date, 7))
+        .filter((w) => isWithinDays(w.date, WORKOUT_THRESHOLDS.RECENT_WORKOUT_WINDOW_DAYS))
         .reduce((sum, w) => sum + w.totalVolume, 0);
       const lastWeekVolume = ctx.recentWorkouts
-        .filter((w) => isWithinDays(w.date, 14) && !isWithinDays(w.date, 7))
+        .filter((w) => isWithinDays(w.date, WORKOUT_THRESHOLDS.EXTENDED_WORKOUT_WINDOW_DAYS) && !isWithinDays(w.date, WORKOUT_THRESHOLDS.RECENT_WORKOUT_WINDOW_DAYS))
         .reduce((sum, w) => sum + w.totalVolume, 0);
-      return thisWeekVolume > lastWeekVolume * 1.05;
+      return thisWeekVolume > lastWeekVolume * WORKOUT_THRESHOLDS.VOLUME_INCREASE_RATIO;
     },
     message: "Progressive overload achieved! Volume up from last week.",
     type: "achievement",
@@ -69,7 +111,7 @@ const rules: RuleCondition[] = [
   {
     check: (ctx) => {
       const daysSinceLastWorkout = getDaysSinceLastWorkout(ctx.recentWorkouts);
-      return daysSinceLastWorkout >= 3;
+      return daysSinceLastWorkout >= WORKOUT_THRESHOLDS.DAYS_SINCE_WORKOUT_WARNING;
     },
     message: "It's been 3+ days since your last workout. Time to hit the gym?",
     type: "tip",
@@ -78,7 +120,7 @@ const rules: RuleCondition[] = [
   {
     check: (ctx) => {
       if (!ctx.todayWorkout || ctx.todayWorkout.status !== "completed") return false;
-      return ctx.todayWorkout.totalVolume > getAverageVolume(ctx.recentWorkouts) * 1.1;
+      return ctx.todayWorkout.totalVolume > getAverageVolume(ctx.recentWorkouts) * WORKOUT_THRESHOLDS.VOLUME_ABOVE_AVERAGE_RATIO;
     },
     message: "Great session! Your volume today exceeded your average.",
     type: "achievement",
@@ -87,7 +129,7 @@ const rules: RuleCondition[] = [
   {
     check: (ctx) => {
       const consecutiveWorkouts = getConsecutiveWorkoutDays(ctx.recentWorkouts);
-      return consecutiveWorkouts >= 5;
+      return consecutiveWorkouts >= WORKOUT_THRESHOLDS.CONSECUTIVE_DAYS_WARNING;
     },
     message: "5+ consecutive training days. Consider scheduling a rest day for recovery.",
     type: "warning",
@@ -97,7 +139,7 @@ const rules: RuleCondition[] = [
     check: (ctx) => {
       const hadWorkoutToday = ctx.todayWorkout?.status === "completed";
       const hasLowProtein = ctx.todayNutrition
-        ? ctx.todayNutrition.totalProtein < ctx.user.proteinTarget * 0.6
+        ? ctx.todayNutrition.totalProtein < ctx.user.proteinTarget * NUTRITION_THRESHOLDS.PROTEIN_VERY_LOW_RATIO
         : false;
       return hadWorkoutToday && hasLowProtein;
     },
@@ -109,7 +151,7 @@ const rules: RuleCondition[] = [
     check: (ctx) => {
       const hadWorkoutToday = ctx.todayWorkout?.status === "completed";
       const hasGoodProtein = ctx.todayNutrition
-        ? ctx.todayNutrition.totalProtein >= ctx.user.proteinTarget * 0.8
+        ? ctx.todayNutrition.totalProtein >= ctx.user.proteinTarget * NUTRITION_THRESHOLDS.PROTEIN_GOOD_RATIO
         : false;
       return hadWorkoutToday && hasGoodProtein;
     },
@@ -148,7 +190,7 @@ function getConsecutiveWorkoutDays(workouts: Workout[]): number {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  for (let i = 0; i < 14; i++) {
+  for (let i = 0; i < WORKOUT_THRESHOLDS.MAX_CONSECUTIVE_CHECK_DAYS; i++) {
     const checkDate = new Date(today);
     checkDate.setDate(checkDate.getDate() - i);
     const dateStr = checkDate.toISOString().split("T")[0];
@@ -217,25 +259,25 @@ export const AIService = {
   },
 
   calculateRecoveryScore(context: AIContext): number {
-    let score = 100;
+    let score = RECOVERY_PENALTIES.BASE_SCORE;
 
     const consecutive = getConsecutiveWorkoutDays(context.recentWorkouts);
-    if (consecutive >= 5) score -= 20;
-    else if (consecutive >= 3) score -= 10;
+    if (consecutive >= WORKOUT_THRESHOLDS.CONSECUTIVE_DAYS_WARNING) score -= RECOVERY_PENALTIES.CONSECUTIVE_5_DAYS;
+    else if (consecutive >= WORKOUT_THRESHOLDS.CONSECUTIVE_DAYS_MODERATE) score -= RECOVERY_PENALTIES.CONSECUTIVE_3_DAYS;
 
     if (context.todayNutrition) {
       const proteinRatio =
         context.todayNutrition.totalProtein / context.user.proteinTarget;
-      if (proteinRatio < 0.5) score -= 15;
-      else if (proteinRatio < 0.7) score -= 10;
+      if (proteinRatio < NUTRITION_THRESHOLDS.CALORIE_DEFICIT_SEVERE) score -= RECOVERY_PENALTIES.PROTEIN_VERY_LOW;
+      else if (proteinRatio < NUTRITION_THRESHOLDS.PROTEIN_LOW_RATIO) score -= RECOVERY_PENALTIES.PROTEIN_LOW;
     } else {
-      score -= 5;
+      score -= RECOVERY_PENALTIES.NO_NUTRITION_DATA;
     }
 
     if (context.user.goal === "muscle" && context.todayNutrition) {
       const calorieRatio =
         context.todayNutrition.totalCalories / context.user.calorieTarget;
-      if (calorieRatio < 0.7) score -= 10;
+      if (calorieRatio < NUTRITION_THRESHOLDS.CALORIE_DEFICIT_MODERATE) score -= RECOVERY_PENALTIES.CALORIE_DEFICIT_MUSCLE_GOAL;
     }
 
     return Math.max(0, Math.min(100, score));
@@ -259,7 +301,7 @@ export const AIService = {
 
       const workoutName = workout.name.toLowerCase();
 
-      if (hoursAgo <= 24) {
+      if (hoursAgo <= TIME_THRESHOLDS.FATIGUED_WINDOW_HOURS) {
         if (workoutName.includes("push") || workoutName.includes("chest") || workoutName.includes("shoulder")) {
           status.upperBody = "fatigued";
         }
@@ -275,7 +317,7 @@ export const AIService = {
         if (workoutName.includes("cardio") || workoutName.includes("run") || workoutName.includes("hiit")) {
           status.cardio = "fatigued";
         }
-      } else if (hoursAgo <= 48) {
+      } else if (hoursAgo <= TIME_THRESHOLDS.RECOVERING_WINDOW_HOURS) {
         if ((workoutName.includes("push") || workoutName.includes("pull") || workoutName.includes("chest") || workoutName.includes("back")) && status.upperBody === "fresh") {
           status.upperBody = "recovering";
         }

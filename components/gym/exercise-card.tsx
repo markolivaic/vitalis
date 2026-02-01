@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: exercise-card.tsx
  * Description: Collapsible exercise card with set tracking for active workouts.
  */

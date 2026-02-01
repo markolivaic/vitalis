@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: index.ts
  * Description: Core type definitions for the Vitalis application domain models.
  */

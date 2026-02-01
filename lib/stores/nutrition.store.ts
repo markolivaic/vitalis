@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: nutrition.store.ts
  * Description: Zustand store for managing nutrition state and meal logging.
  */

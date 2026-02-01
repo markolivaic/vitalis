@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: routine-card.tsx
  * Description: Workout routine display card with exercise preview and start action.
  */

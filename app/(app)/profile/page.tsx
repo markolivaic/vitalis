@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: page.tsx
  * Description: User profile page with settings, targets, and account management.
  */

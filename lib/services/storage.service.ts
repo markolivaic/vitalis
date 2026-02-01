@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: storage.service.ts
  * Description: LocalStorage abstraction layer for client-side data persistence.
  */

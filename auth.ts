@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: auth.ts
  * Description: NextAuth.js configuration with Prisma adapter and credential provider.
  */

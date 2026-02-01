@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: route.ts
  * Description: API endpoint for user registration.
  */

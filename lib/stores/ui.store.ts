@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: ui.store.ts
  * Description: Zustand store for managing UI state across the application.
  */

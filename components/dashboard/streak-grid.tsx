@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: streak-grid.tsx
  * Description: Activity streak visualization grid component with real-time data fetching.
  */

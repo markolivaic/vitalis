@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: donut-chart.tsx
  * Description: Reusable donut chart component with gradient support.
  */

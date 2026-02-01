@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: prisma.ts
  * Description: Prisma client singleton with PostgreSQL adapter for Supabase.
  */

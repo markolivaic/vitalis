@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: checkbox.tsx
  * Description: Accessible checkbox component built on Radix UI.
  */

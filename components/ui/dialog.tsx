@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: dialog.tsx
  * Description: Modal dialog components built on Radix UI Dialog primitive.
  */

@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: nutrition.service.ts
  * Description: Service for managing nutrition data, food database, and meal logging.
  */

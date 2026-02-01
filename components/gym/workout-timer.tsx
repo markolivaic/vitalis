@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: workout-timer.tsx
  * Description: Real-time workout duration timer component.
  */

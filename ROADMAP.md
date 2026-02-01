@@ -1,167 +1,45 @@
-# Vitalis AI - Post-MVP Technical Roadmap
+# Vitalis AI - Development Roadmap
 
-This document outlines the strategic development phases for Vitalis AI following the completion of the MVP. Each section represents a major feature enhancement that will transform the application into a comprehensive health and fitness platform.
+## Phase 1: MVP (Current State - Complete)
 
----
+- [x] Core fitness tracking (workouts, nutrition)
+- [x] 3D Digital Twin visualization
+- [x] Rule-based AI insights
+- [x] Admin panel with CRUD operations
+- [x] User authentication (NextAuth v5)
+- [x] RESTful API architecture
+- [x] Database with 4+ entities (Prisma + PostgreSQL)
 
-## 1. AI Integration
+## Phase 2: AI Enhancement (Q2 2025)
 
-**Objective:** Transition from rule-based insights to LLM-driven bio-analytics.
+- [ ] Replace rule-engine with OpenAI GPT-4o API
+- [ ] Context-aware workout recommendations
+- [ ] Natural language nutrition logging
+- [ ] Personalized meal plan generation
 
-### Implementation Strategy
+## Phase 3: Wearable Integration (Q3 2025)
 
-- Integrate OpenAI GPT-4o API for natural language processing of health data
-- Develop context-aware prompt engineering for personalized recommendations
-- Implement streaming responses for real-time AI feedback during workouts
-- Create fallback mechanisms to rule-based engine for offline scenarios
+- [ ] Garmin Connect API integration
+- [ ] Apple Health data sync
+- [ ] Real-time heart rate zone tracking
+- [ ] Sleep quality correlation analysis
 
-### Technical Requirements
+## Phase 4: Advanced Analytics (Q4 2025)
 
-- OpenAI API key management via environment variables
-- Rate limiting and token optimization strategies
-- Response caching for frequently requested insights
-- Privacy-preserving data anonymization before API transmission
+- [ ] Progressive overload tracking with auto-suggestions
+- [ ] Injury risk prediction based on volume patterns
+- [ ] Comparative analytics (user vs. population average)
+- [ ] 3D model vertex-level fatigue mapping
 
-### Expected Outcomes
+## Phase 5: Social & Competitive (2026)
 
-- Personalized workout recommendations based on historical performance
-- Intelligent meal suggestions aligned with macro targets
-- Adaptive recovery recommendations using fatigue analysis
-- Natural language query interface for health metrics
-
----
-
-## 2. Bio-Metric Synchronization
-
-**Objective:** Enable seamless integration with wearable devices and health platforms.
-
-### Apple HealthKit Integration
-
-- Read access: heart rate, sleep data, step count, active calories
-- Write access: workout sessions, nutrition logs
-- Background sync with differential updates
-- HealthKit authorization flow with granular permission management
-
-### Google Fit Integration
-
-- REST API integration for Android user support
-- OAuth 2.0 authentication flow
-- Data source aggregation from multiple fitness trackers
-- Cross-platform data normalization
-
-### Technical Requirements
-
-- Native bridge implementation for HealthKit (React Native or Capacitor)
-- Google Fit REST API client with token refresh handling
-- Unified data model for cross-platform health metrics
-- Conflict resolution for overlapping data sources
-
-### Expected Outcomes
-
-- Automatic workout detection and logging
-- Sleep quality correlation with recovery scores
-- Heart rate variability analysis for training readiness
-- Step-based activity factor refinement
+- [ ] Anonymized leaderboards
+- [ ] Workout sharing & templates
+- [ ] Trainer-client relationship tools
+- [ ] Community challenges
 
 ---
 
-## 3. Advanced 3D Anatomy Visualization
+**Technical Stack**: Next.js 15, TypeScript, Prisma, Supabase, Three.js, Zustand, TanStack Query
 
-**Objective:** Implement micro-level muscle fatigue mapping using high-fidelity 3D models.
-
-### Blender Vertex Group Architecture
-
-- Individual muscle mesh separation (42+ distinct muscle groups)
-- UV mapping for texture-based fatigue gradients
-- Bone rigging for anatomically accurate animations
-- LOD (Level of Detail) system for performance optimization
-
-### Real-Time Visualization Features
-
-- Per-muscle fatigue intensity mapping (0-100% scale)
-- Exercise-specific muscle activation highlighting
-- Time-based recovery progression animations
-- Interactive muscle selection for detailed statistics
-
-### Technical Requirements
-
-- GLTF/GLB model optimization for web delivery
-- Three.js shader customization for dynamic coloring
-- WebGL 2.0 compatibility with fallback rendering
-- Touch gesture support for mobile 3D interaction
-
-### Expected Outcomes
-
-- Visual feedback showing exact muscles worked per exercise
-- Recovery timeline visualization per muscle group
-- Imbalance detection through bilateral comparison
-- Educational anatomy overlay mode
-
----
-
-## 4. Real-Time Engine
-
-**Objective:** Implement WebSocket infrastructure for live workout tracking and system-wide synchronization.
-
-### WebSocket Architecture
-
-- Socket.IO or native WebSocket implementation
-- Connection state management with automatic reconnection
-- Message queue for offline resilience
-- Binary protocol optimization for low-latency updates
-
-### Live Tracking Features
-
-- Real-time workout sync across devices
-- Live coaching with rep counting and form feedback
-- Multiplayer workout sessions with shared progress
-- Instant notification delivery for achievements
-
-### Technical Requirements
-
-- WebSocket server deployment (Node.js with Redis pub/sub)
-- Client-side connection pooling and heartbeat management
-- Event-driven state synchronization with Zustand
-- Optimistic UI updates with server reconciliation
-
-### Expected Outcomes
-
-- Seamless multi-device workout continuation
-- Real-time leaderboards for competitive training
-- Live trainer-client session support
-- Instant cross-device notification propagation
-
----
-
-## Implementation Timeline
-
-| Phase | Feature | Estimated Duration |
-|-------|---------|-------------------|
-| Q2 2026 | AI Integration | 6 weeks |
-| Q3 2026 | Bio-Metric Sync | 8 weeks |
-| Q4 2026 | Advanced 3D Anatomy | 10 weeks |
-| Q1 2027 | Real-Time Engine | 8 weeks |
-
----
-
-## Technical Dependencies
-
-- OpenAI API subscription (GPT-4o access)
-- Apple Developer Program membership (HealthKit)
-- Google Cloud Platform project (Google Fit API)
-- WebSocket-capable hosting infrastructure
-- Blender 3D modeling expertise
-
----
-
-## Success Metrics
-
-- AI insight accuracy rate above 85%
-- Bio-metric sync latency under 5 seconds
-- 3D visualization frame rate above 30 FPS on mobile
-- WebSocket message delivery under 100ms
-
----
-
-*This roadmap is subject to revision based on user feedback and technological advancements.*
-
+**Demo Credentials**: admin@vitalis.ai / admin123

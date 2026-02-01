@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: progress.tsx
  * Description: Animated progress bar component with color variants.
  */

@@ -1,11 +1,13 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: body.store.ts
  * Description: Zustand store for managing body muscle status and fatigue calculations.
  */
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { BodyStatus, MuscleStatus, Workout } from "@/lib/types";
+import type { BodyStatus, MuscleStatus, Workout, MuscleGroup } from "@/lib/types";
+import { WorkoutService } from "@/lib/services/workout.service";
 
 interface BodyState {
   bodyStatus: BodyStatus;
@@ -45,66 +47,50 @@ export const useBodyStore = create<BodyState>()(
         const newStatus = { ...get().bodyStatus };
         let hasChanges = false;
 
-        const keywords = {
-          upperBody: [
-            // Chest
-            "chest", "bench", "fly", "pec", "crossover",
-            // Upper Back (traps, rear delts)
-            "shrug", "face pull", "rear delt", "trap", "y-raise", "pull-apart",
-            // Middle Back (lats, rhomboids)
-            "row", "pull", "lat", "chin", "pulldown",
-            // Shoulders
-            "shoulder", "deltoid", "raise", "overhead", "arnold", "upright", "landmine",
-            // Biceps
-            "bicep", "curl", "preacher", "hammer", "spider",
-            // Triceps
-            "tricep", "pushdown", "skull", "kickback", "dip", "diamond"
-          ],
-          lowerBody: [
-            // Quads
-            "squat", "leg press", "leg extension", "lunge", "split squat", "hack", "goblet", "sissy",
-            // Hamstrings
-            "leg curl", "romanian", "stiff leg", "nordic", "glute ham",
-            // Glutes
-            "glute", "hip thrust", "bridge", "step-up", "sumo",
-            // Calves
-            "calf", "calves",
-            // Lower Back
-            "deadlift", "good morning", "back extension", "hyperextension"
-          ],
-          core: [
-            "ab", "crunch", "plank", "sit-up", "core", "oblique",
-            "pallof", "dead bug", "woodchop", "rollout", "leg raise"
-          ],
-          cardio: [
-            "run", "treadmill", "bike", "cycle", "elliptical",
-            "rowing", "jump", "cardio", "stair", "rope"
-          ]
+        // Map muscle groups to body parts
+        const muscleGroupToBodyPart: Record<MuscleGroup, keyof BodyStatus> = {
+          // Upper Body
+          chest: "upperBody",
+          upper_back: "upperBody",
+          middle_back: "upperBody",
+          shoulders: "upperBody",
+          biceps: "upperBody",
+          triceps: "upperBody",
+
+          // Core
+          core: "core",
+          lower_back: "core",
+
+          // Lower Body
+          quads: "lowerBody",
+          hamstrings: "lowerBody",
+          glutes: "lowerBody",
+          calves: "lowerBody",
+
+          // Cardio
+          cardio: "cardio",
         };
 
         workout.exercises.forEach((exercise) => {
-          const name = exercise.exerciseName.toLowerCase();
-          console.log("Analyzing exercise:", name);
+          console.log("Analyzing exercise:", exercise.exerciseName);
 
-          if (keywords.upperBody.some(k => name.includes(k))) {
-            newStatus.upperBody = "fatigued";
-            hasChanges = true;
-            console.log("Upper body targeted");
+          // Fetch exercise data from exerciseId
+          const exerciseData = WorkoutService.getExerciseById(exercise.exerciseId);
+
+          if (!exerciseData) {
+            console.warn("Exercise not found:", exercise.exerciseId);
+            return;
           }
-          if (keywords.lowerBody.some(k => name.includes(k))) {
-            newStatus.lowerBody = "fatigued";
+
+          // Map muscleGroup to body part
+          const bodyPart = muscleGroupToBodyPart[exerciseData.muscleGroup];
+
+          if (bodyPart) {
+            newStatus[bodyPart] = "fatigued";
             hasChanges = true;
-            console.log("Lower body targeted");
-          }
-          if (keywords.core.some(k => name.includes(k))) {
-            newStatus.core = "fatigued";
-            hasChanges = true;
-            console.log("Core targeted");
-          }
-          if (keywords.cardio.some(k => name.includes(k))) {
-            newStatus.cardio = "fatigued";
-            hasChanges = true;
-            console.log("Cardio targeted");
+            console.log(`Muscle group "${exerciseData.muscleGroup}" mapped to "${bodyPart}"`);
+          } else {
+            console.warn("Unknown muscle group:", exerciseData.muscleGroup);
           }
         });
 

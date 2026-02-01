@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: route.ts
  * Description: API endpoints for user profile management with dynamic macro recalculation.
  */

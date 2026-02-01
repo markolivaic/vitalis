@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: login-buttons.tsx
  * Description: Authentication button components for OAuth providers and sign out.
  */

@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: weekly-chart.tsx
  * Description: Weekly calorie intake bar chart visualization.
  */

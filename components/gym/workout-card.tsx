@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: workout-card.tsx
  * Description: Workout summary card for history and overview displays.
  */

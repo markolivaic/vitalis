@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: label.tsx
  * Description: Accessible label component built on Radix UI Label primitive.
  */

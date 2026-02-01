@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: route.ts
  * Description: Admin API endpoint for fetching all users.
  */

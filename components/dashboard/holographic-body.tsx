@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: holographic-body.tsx
  * Description: Legacy 2D SVG body status visualization component.
  */

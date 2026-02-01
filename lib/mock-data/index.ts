@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: index.ts
  * Description: Mock data generators and default values for development and seeding.
  */

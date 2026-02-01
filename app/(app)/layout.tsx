@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: layout.tsx
  * Description: Main application layout with sidebar, navigation, and providers.
  */

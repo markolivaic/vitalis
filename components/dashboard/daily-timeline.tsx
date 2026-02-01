@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: daily-timeline.tsx
  * Description: Daily schedule timeline component showing meals and workouts with real-time data fetching.
  */

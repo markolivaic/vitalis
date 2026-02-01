@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: user.service.ts
  * Description: Service for managing user profile data and macro calculations.
  */

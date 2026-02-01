@@ -1,12 +1,7 @@
-import "dotenv/config";
-import { defineConfig } from "@prisma/config";
+/**
+ * Vitalis AI | Health & Performance Hub
+ * File: prisma.config.ts
+ * Description: Prisma configuration for deployment environments.
+ */
 
-export default defineConfig({
-  schema: "./prisma/schema.prisma",
-  migrations: {
-    seed: "tsx ./prisma/seed.ts",
-  },
-  datasource: {
-    url: process.env.DIRECT_URL || process.env.DATABASE_URL,
-  },
-});
+export const config = {};

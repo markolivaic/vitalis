@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: tabs.tsx
  * Description: Tabbed navigation component built on Radix UI Tabs primitive.
  */

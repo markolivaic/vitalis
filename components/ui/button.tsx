@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: button.tsx
  * Description: Reusable button component with multiple style variants.
  */

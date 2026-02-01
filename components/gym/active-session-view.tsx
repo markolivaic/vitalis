@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: active-session-view.tsx
  * Description: Active workout session view with exercise tracking and set logging.
  */

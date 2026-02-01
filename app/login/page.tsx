@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: page.tsx
  * Description: Login and registration page with OAuth provider support.
  */
@@ -59,7 +60,7 @@ export default function LoginPage() {
         }
       }
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError("Failed to process authentication request. Please try again.");
     } finally {
       setLoading(false);
     }

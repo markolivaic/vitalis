@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: page.tsx
  * Description: Unified activity history page with timeline view.
  */

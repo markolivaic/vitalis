@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: layout.tsx
  * Description: Root application layout with fonts, metadata, and global styles.
  */

@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: macro-progress-bars.tsx
  * Description: Daily macronutrient progress visualization component.
  */

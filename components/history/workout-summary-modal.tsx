@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: workout-summary-modal.tsx
  * Description: Modal dialog displaying detailed workout session summary.
  */

@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: auth.config.ts
  * Description: Edge-compatible NextAuth configuration for middleware session checks.
  */

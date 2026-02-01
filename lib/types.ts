@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: types.ts
  * Description: Database-specific type definitions for API responses and Prisma models.
  */

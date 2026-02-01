@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: unified-timeline.tsx
  * Description: Combined workout and nutrition history timeline component.
  */

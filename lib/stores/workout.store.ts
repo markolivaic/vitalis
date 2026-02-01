@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: workout.store.ts
  * Description: Zustand store for managing active workout session state.
  */

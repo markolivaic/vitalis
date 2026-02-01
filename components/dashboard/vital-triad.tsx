@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: vital-triad.tsx
  * Description: Three-card dashboard widget showing fuel, output, and system status.
  */

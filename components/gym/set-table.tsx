@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: set-table.tsx
  * Description: Editable table component for workout set logging.
  */
@@ -28,7 +29,7 @@ export function SetTable({ sets, onUpdateSet, onRemoveSet }: SetTableProps) {
             <th className="text-left py-2 px-2 w-20">Prev</th>
             <th className="text-left py-2 px-2">kg</th>
             <th className="text-left py-2 px-2">Reps</th>
-            <th className="text-center py-2 px-2 w-12">✓</th>
+            <th className="text-center py-2 px-2 w-12">Done</th>
             <th className="w-10"></th>
           </tr>
         </thead>

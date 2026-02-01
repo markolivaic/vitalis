@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: input.tsx
  * Description: Text input component with default and ghost variants.
  */

@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: page.tsx
  * Description: Nutrition tracking page with meal logging and weekly overview.
  */

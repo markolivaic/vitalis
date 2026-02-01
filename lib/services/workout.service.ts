@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: workout.service.ts
  * Description: Service for managing workouts, routines, exercises, and active sessions.
  */

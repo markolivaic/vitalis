@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: page.tsx
  * Description: Main dashboard page with vitals, holographic body, and activity overview.
  */

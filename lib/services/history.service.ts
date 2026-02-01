@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: history.service.ts
  * Description: Service for managing unified timeline history of workouts and nutrition.
  */

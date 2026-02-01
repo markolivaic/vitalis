@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: meal-list.tsx
  * Description: Collapsible meal sections with food entry management.
  */

@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: food-search-modal.tsx
  * Description: Modal for searching, selecting, and logging food items.
  */

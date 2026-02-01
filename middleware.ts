@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: middleware.ts
  * Description: Next.js middleware for authentication route protection.
  */

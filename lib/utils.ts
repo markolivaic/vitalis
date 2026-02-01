@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: utils.ts
  * Description: Utility functions for formatting, calculations, and common operations.
  */

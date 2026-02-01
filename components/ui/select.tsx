@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: select.tsx
  * Description: Dropdown select component built on Radix UI Select primitive.
  */

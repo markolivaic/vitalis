@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: route.ts
  * Description: API endpoint for dashboard statistics including consistency grid, timeline, and nutrition/workout data.
  */

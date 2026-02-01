@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: seed.ts
  * Description: Database seeding script for exercises and foods.
  */
@@ -7,6 +8,7 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import bcrypt from "bcryptjs";
 import { exerciseDatabase, foodDatabase } from "../lib/mock-data";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -46,6 +48,31 @@ async function main() {
     });
   }
 
+  console.log("Creating default admin user...");
+  const hashedPassword = await bcrypt.hash("admin123", 10);
+
+  await prisma.user.upsert({
+    where: { email: "admin@vitalis.ai" },
+    update: {},
+    create: {
+      email: "admin@vitalis.ai",
+      password: hashedPassword,
+      name: "System Admin",
+      role: "admin",
+      age: 30,
+      weight: 75,
+      height: 175,
+      gender: "male",
+      goal: "maintenance",
+      activityLevel: 1.55,
+      calorieTarget: 2200,
+      proteinTarget: 165,
+      carbsTarget: 220,
+      fatsTarget: 65,
+    },
+  });
+
+  console.log("Admin user created: admin@vitalis.ai / admin123");
   console.log("Seeding completed successfully.");
 }
 

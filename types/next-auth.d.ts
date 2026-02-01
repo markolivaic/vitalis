@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: next-auth.d.ts
  * Description: NextAuth.js type augmentations for custom user properties.
  */

@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: textarea.tsx
  * Description: Multi-line text input component with styling variants.
  */

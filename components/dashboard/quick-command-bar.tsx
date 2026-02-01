@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: quick-command-bar.tsx
  * Description: Quick action bar for common dashboard operations.
  */

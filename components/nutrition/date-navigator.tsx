@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: date-navigator.tsx
  * Description: Date selection navigation component for nutrition tracking.
  */

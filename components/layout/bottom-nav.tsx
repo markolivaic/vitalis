@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: bottom-nav.tsx
  * Description: Mobile bottom navigation bar component.
  */

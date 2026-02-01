@@ -1,4 +1,5 @@
 /**
+ * Vitalis AI | Health & Performance Hub
  * File: glass-card.tsx
  * Description: Glassmorphism card component for the Void aesthetic.
  */
