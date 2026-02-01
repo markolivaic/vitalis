@@ -1,3 +1,8 @@
+/**
+ * File: bottom-nav.tsx
+ * Description: Mobile bottom navigation bar component.
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";

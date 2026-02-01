@@ -1,3 +1,8 @@
+/**
+ * File: label.tsx
+ * Description: Accessible label component built on Radix UI Label primitive.
+ */
+
 "use client";
 
 import * as LabelPrimitive from "@radix-ui/react-label";

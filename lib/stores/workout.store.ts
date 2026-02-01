@@ -1,3 +1,8 @@
+/**
+ * File: workout.store.ts
+ * Description: Zustand store for managing active workout session state.
+ */
+
 import { create } from "zustand";
 import { WorkoutService } from "@/lib/services/workout.service";
 import { useBodyStore } from "./body.store";
@@ -11,17 +16,15 @@ interface WorkoutState {
   activeRoutine: Workout | null;
   completedSets: Record<string, boolean>;
   startTime: number | null;
-  
-  // Actions
   startWorkout: (routineId?: string) => void;
   logSet: (exerciseId: string, setId: string, weight: number, reps: number) => void;
-  updateSetCompleted: (exerciseId: string, setId: string, completed: boolean) => void;
+  updateSetCompleted: (exerciseId: string, setId: string, isCompleted: boolean) => void;
   updateSetType: (exerciseId: string, setId: string, type: SetType) => void;
   updateExerciseNote: (exerciseId: string, note: string) => void;
   updateWorkoutDetails: (name: string, notes: string) => void;
   pauseWorkout: () => void;
   resumeWorkout: () => void;
-  finishWorkout: (name?: string, notes?: string) => void;
+  finishWorkout: (name?: string, notes?: string) => Promise<void>;
   cancelWorkout: () => void;
   updateElapsedTime: () => void;
 }
@@ -35,9 +38,8 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
 
   startWorkout: (routineId) => {
     const workout = WorkoutService.startWorkout(routineId);
-    // Calculate start time from workout's startTime string
     const startTime = new Date(`${workout.date}T${workout.startTime}`).getTime();
-    
+
     set({
       status: "active",
       activeRoutine: workout,
@@ -57,18 +59,18 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     }
   },
 
-  updateSetCompleted: (exerciseId, setId, completed) => {
+  updateSetCompleted: (exerciseId, setId, isCompleted) => {
     const state = get();
     if (!state.activeRoutine) return;
 
-    const updated = WorkoutService.updateSet(exerciseId, setId, { completed });
+    const updated = WorkoutService.updateSet(exerciseId, setId, { completed: isCompleted });
     if (updated) {
       const setKey = `${exerciseId}-${setId}`;
       set({
         activeRoutine: updated,
         completedSets: {
           ...state.completedSets,
-          [setKey]: completed,
+          [setKey]: isCompleted,
         },
       });
     }
@@ -114,7 +116,6 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
   resumeWorkout: () => {
     const state = get();
     if (state.activeRoutine && state.startTime) {
-      // Adjust start time to account for paused duration
       const now = Date.now();
       const pausedDuration = now - (state.startTime + state.elapsedSeconds * 1000);
       set({
@@ -126,16 +127,14 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     }
   },
 
-  finishWorkout: (name, notes) => {
+  finishWorkout: async (name, notes) => {
     const state = get();
     if (!state.activeRoutine) return;
 
-    // Update workout details if provided
     if (name || notes) {
       const currentName = name || state.activeRoutine.name;
       const currentNotes = notes || state.activeRoutine.notes || "";
-      
-      // Update workout details via WorkoutService
+
       let updated = WorkoutService.updateWorkoutName(currentName);
       if (updated) {
         updated = WorkoutService.updateWorkoutNotes(currentNotes);
@@ -145,14 +144,11 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
       }
     }
 
-    // Complete the workout via WorkoutService
     const completedWorkout = WorkoutService.completeWorkout();
-    
+
     if (completedWorkout) {
-      // Force the body store to update
       useBodyStore.getState().calculateFatigueFromWorkout(completedWorkout);
-      
-      // Clear state
+
       set({
         status: "idle",
         activeRoutine: null,
@@ -160,6 +156,26 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
         completedSets: {},
         startTime: null,
       });
+
+      try {
+        const response = await fetch("/api/workouts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: completedWorkout.name,
+            duration: completedWorkout.duration,
+            totalVolume: completedWorkout.totalVolume,
+            notes: completedWorkout.notes,
+            exercises: completedWorkout.exercises,
+          }),
+        });
+
+        if (!response.ok) {
+          console.error("Failed to sync workout to database");
+        }
+      } catch (error) {
+        console.error("Error syncing workout to database:", error);
+      }
     }
   },
 
@@ -182,4 +198,3 @@ export const useWorkoutStore = create<WorkoutState>((set, get) => ({
     }
   },
 }));
-

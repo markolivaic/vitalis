@@ -1,3 +1,8 @@
+/**
+ * File: holographic-body.tsx
+ * Description: Legacy 2D SVG body status visualization component.
+ */
+
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";
@@ -59,9 +64,9 @@ export function HolographicBody({ status, aiMessage }: HolographicBodyProps) {
             className={cn(
               "stroke-2 transition-colors duration-500",
               status.upperBody === "fatigued" ? "fill-amber-500/20 stroke-amber-500" :
-              status.upperBody === "recovering" ? "fill-blue-500/20 stroke-blue-500" :
-              status.upperBody === "target" ? "fill-violet-500/20 stroke-violet-500 animate-pulse" :
-              "fill-white/5 stroke-emerald-500/30"
+                status.upperBody === "recovering" ? "fill-blue-500/20 stroke-blue-500" :
+                  status.upperBody === "target" ? "fill-violet-500/20 stroke-violet-500 animate-pulse" :
+                    "fill-white/5 stroke-emerald-500/30"
             )}
           />
 
@@ -71,9 +76,9 @@ export function HolographicBody({ status, aiMessage }: HolographicBodyProps) {
             className={cn(
               "stroke-2 transition-colors duration-500",
               status.core === "fatigued" ? "fill-amber-500/20 stroke-amber-500" :
-              status.core === "recovering" ? "fill-blue-500/20 stroke-blue-500" :
-              status.core === "target" ? "fill-violet-500/20 stroke-violet-500 animate-pulse" :
-              "fill-white/5 stroke-emerald-500/30"
+                status.core === "recovering" ? "fill-blue-500/20 stroke-blue-500" :
+                  status.core === "target" ? "fill-violet-500/20 stroke-violet-500 animate-pulse" :
+                    "fill-white/5 stroke-emerald-500/30"
             )}
           />
 
@@ -83,17 +88,17 @@ export function HolographicBody({ status, aiMessage }: HolographicBodyProps) {
             className={cn(
               "stroke-2 transition-colors duration-500",
               status.lowerBody === "fatigued" ? "fill-amber-500/20 stroke-amber-500" :
-              status.lowerBody === "recovering" ? "fill-blue-500/20 stroke-blue-500" :
-              status.lowerBody === "target" ? "fill-violet-500/20 stroke-violet-500 animate-pulse" :
-              "fill-white/5 stroke-emerald-500/30"
+                status.lowerBody === "recovering" ? "fill-blue-500/20 stroke-blue-500" :
+                  status.lowerBody === "target" ? "fill-violet-500/20 stroke-violet-500 animate-pulse" :
+                    "fill-white/5 stroke-emerald-500/30"
             )}
           />
         </svg>
 
         {/* Scanline Overlay */}
-        <div 
-          className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/10 to-transparent h-4 w-full animate-scan pointer-events-none" 
-          style={{ animationDuration: '3s' }} 
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-transparent via-emerald-500/10 to-transparent h-4 w-full animate-scan pointer-events-none"
+          style={{ animationDuration: '3s' }}
         />
       </div>
 

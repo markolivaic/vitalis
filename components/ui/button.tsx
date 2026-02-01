@@ -1,3 +1,8 @@
+/**
+ * File: button.tsx
+ * Description: Reusable button component with multiple style variants.
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";

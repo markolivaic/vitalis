@@ -1,13 +1,17 @@
-// ===== USER TYPES =====
+/**
+ * File: index.ts
+ * Description: Core type definitions for the Vitalis application domain models.
+ */
+
 export interface User {
   id: string;
   name: string;
   age: number;
   gender: "male" | "female";
-  height: number; // cm
-  weight: number; // kg
+  height: number;
+  weight: number;
   goal: "muscle" | "fat_loss" | "maintenance";
-  activityLevel: number; // 1.2 - 1.9 multiplier
+  activityLevel: number;
   calorieTarget: number;
   proteinTarget: number;
   carbsTarget: number;
@@ -16,7 +20,6 @@ export interface User {
   updatedAt: string;
 }
 
-// ===== WORKOUT TYPES =====
 export interface Exercise {
   id: string;
   name: string;
@@ -26,11 +29,16 @@ export interface Exercise {
 
 export type MuscleGroup =
   | "chest"
-  | "back"
+  | "upper_back"
+  | "middle_back"
+  | "lower_back"
   | "shoulders"
   | "biceps"
   | "triceps"
-  | "legs"
+  | "quads"
+  | "hamstrings"
+  | "glutes"
+  | "calves"
   | "core"
   | "cardio";
 
@@ -47,10 +55,10 @@ export type SetType = "normal" | "warmup" | "drop" | "failure";
 export interface WorkoutSet {
   id: string;
   setNumber: number;
-  weight: number; // kg
+  weight: number;
   reps: number;
   completed: boolean;
-  type?: SetType; // Default: 'normal'
+  type?: SetType;
   previousWeight?: number;
   previousReps?: number;
 }
@@ -69,9 +77,9 @@ export interface Workout {
   date: string;
   startTime: string;
   endTime?: string;
-  duration?: number; // seconds
+  duration?: number;
   exercises: WorkoutExercise[];
-  totalVolume: number; // kg
+  totalVolume: number;
   status: "planned" | "in_progress" | "completed";
   routineId?: string;
   notes?: string;
@@ -84,12 +92,11 @@ export interface WorkoutRoutine {
     exerciseId: string;
     exerciseName: string;
     targetSets: number;
-    targetReps: string; // e.g., "8-12"
+    targetReps: string;
   }[];
   color: "violet" | "emerald" | "amber" | "rose";
 }
 
-// ===== NUTRITION TYPES =====
 export interface FoodItem {
   id: string;
   name: string;
@@ -134,7 +141,6 @@ export interface DailyNutrition {
   totalFats: number;
 }
 
-// ===== HISTORY/TIMELINE TYPES =====
 export interface TimelineEntry {
   id: string;
   type: "workout" | "nutrition";
@@ -145,14 +151,13 @@ export interface TimelineEntry {
 }
 
 export interface TimelineItem extends TimelineEntry {
-  timestamp: number; // For sorting
-  isPerfectDay?: boolean; // If this day was perfect
-  prsHit?: string[]; // For workouts: list of PRs achieved
+  timestamp: number;
+  isPerfectDay?: boolean;
+  prsHit?: string[];
 }
 
 export type TimelineFilter = "all" | "workouts" | "nutrition";
 
-// ===== AI TYPES =====
 export interface AIInsight {
   id: string;
   type: "tip" | "warning" | "achievement";
@@ -161,7 +166,6 @@ export interface AIInsight {
   createdAt: string;
 }
 
-// ===== BODY STATUS TYPES =====
 export type MuscleStatus = "fresh" | "fatigued" | "recovering" | "target";
 
 export interface BodyStatus {
@@ -180,7 +184,6 @@ export interface AIContext {
   bodyStatus: BodyStatus;
 }
 
-// ===== SCHEDULED ITEMS =====
 export interface ScheduledItem {
   id: string;
   type: "meal" | "workout";
@@ -190,11 +193,9 @@ export interface ScheduledItem {
   linkedId?: string;
 }
 
-// ===== STREAK DATA =====
 export interface StreakDay {
   date: string;
-  activityLevel: 0 | 1 | 2 | 3; // 0 = none, 1 = low, 2 = medium, 3 = high
+  activityLevel: 0 | 1 | 2 | 3;
   hasWorkout: boolean;
   hasNutrition: boolean;
 }
-

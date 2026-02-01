@@ -1,3 +1,8 @@
+/**
+ * File: sidebar.tsx
+ * Description: Desktop sidebar navigation component with collapsible state.
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -10,10 +15,12 @@ import {
   Activity,
   ChevronLeft,
   ChevronRight,
+  Shield,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUIStore } from "@/lib/stores/ui.store";
+import { useSession } from "next-auth/react";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: Home },
@@ -26,6 +33,11 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
+  const { data: session } = useSession();
+
+  const isAdmin = session?.user?.role === "admin";
+  const userInitial = session?.user?.name?.charAt(0)?.toUpperCase() || 
+                      session?.user?.email?.charAt(0)?.toUpperCase() || "?";
 
   return (
     <aside
@@ -47,8 +59,12 @@ export function Sidebar() {
           </div>
           {!sidebarCollapsed && (
             <div className="flex flex-col">
-              <span className="font-bold text-white text-lg tracking-tight">Vitalis</span>
-              <span className="text-[10px] text-zinc-500 uppercase tracking-widest">AI Health Hub</span>
+              <span className="font-bold text-white text-lg tracking-tight">
+                Vitalis<span className="text-emerald-400">AI</span>
+              </span>
+              <span className="text-[10px] text-zinc-500 uppercase tracking-widest">
+                Performance Hub
+              </span>
             </div>
           )}
         </div>
@@ -94,19 +110,72 @@ export function Sidebar() {
             </Link>
           );
         })}
+
+        {/* Admin Section */}
+        {isAdmin && (
+          <div className="pt-4 mt-4 border-t border-white/5">
+            {!sidebarCollapsed && (
+              <p className="px-4 text-[10px] uppercase text-zinc-600 tracking-[0.2em] mb-2">
+                Authority
+              </p>
+            )}
+            <Link
+              href="/admin"
+              className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+                "bg-violet-500/5 border border-violet-500/10 hover:bg-violet-500/10",
+                pathname.startsWith("/admin") && "border-violet-500/30 bg-violet-500/20",
+                sidebarCollapsed && "justify-center px-0"
+              )}
+            >
+              <Shield
+                className={cn(
+                  "w-5 h-5 transition-colors",
+                  pathname.startsWith("/admin") ? "text-violet-400" : "text-violet-500 group-hover:text-violet-400"
+                )}
+              />
+              {!sidebarCollapsed && (
+                <span className="text-sm font-medium text-violet-300">
+                  Mission Control
+                </span>
+              )}
+            </Link>
+          </div>
+        )}
       </nav>
 
-      {/* Status Card */}
-      {!sidebarCollapsed && (
+      {/* User Status Card */}
+      {!sidebarCollapsed && session?.user && (
         <div className="px-4 pb-4">
-          <div className="glass-card p-4">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-xs text-zinc-400 uppercase tracking-wider">System Status</span>
+          <div className="glass-card p-4 border-emerald-500/10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-zinc-800 to-zinc-900 border border-white/10 flex items-center justify-center overflow-hidden">
+                {session.user.image ? (
+                  <img 
+                    src={session.user.image} 
+                    alt="avatar" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-sm font-bold text-zinc-400">{userInitial}</span>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">
+                  {session.user.name || "Subject"}
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className={cn(
+                    "w-1.5 h-1.5 rounded-full",
+                    isAdmin ? "bg-violet-400" : "bg-emerald-400",
+                    "animate-pulse"
+                  )} />
+                  <span className="text-[10px] text-zinc-500 uppercase tracking-wider">
+                    {isAdmin ? "Admin" : "Active"}
+                  </span>
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-zinc-300 font-mono-ai">
-              {"> All systems operational"}
-            </p>
           </div>
         </div>
       )}
@@ -129,4 +198,3 @@ export function Sidebar() {
     </aside>
   );
 }
-

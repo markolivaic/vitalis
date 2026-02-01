@@ -1,3 +1,8 @@
+/**
+ * File: workout-card.tsx
+ * Description: Workout summary card for history and overview displays.
+ */
+
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";
@@ -11,6 +16,21 @@ interface WorkoutCardProps {
 }
 
 export function WorkoutCard({ workout, onClick }: WorkoutCardProps) {
+  // Guard clause for null/undefined workout
+  if (!workout) {
+    return (
+      <GlassCard padding="md" className="text-center py-8">
+        <div className="text-zinc-600 mb-2 font-mono text-xs">[ NO DATA ]</div>
+        <p className="text-sm text-zinc-500">
+          No active training data detected.
+        </p>
+        <p className="text-xs text-zinc-600 mt-1">
+          Initialize session to begin.
+        </p>
+      </GlassCard>
+    );
+  }
+
   const durationMinutes = workout.duration
     ? Math.floor(workout.duration / 60)
     : 0;
@@ -58,10 +78,16 @@ export function WorkoutCard({ workout, onClick }: WorkoutCardProps) {
         </div>
       </div>
 
-      {workout.exercises.length > 0 && (
+      {workout.exercises && workout.exercises.length > 0 ? (
         <div className="mt-3 pt-3 border-t border-white/5">
           <p className="text-xs text-zinc-500">
             {workout.exercises.map((e) => e.exerciseName).join(" • ")}
+          </p>
+        </div>
+      ) : (
+        <div className="mt-3 pt-3 border-t border-white/5">
+          <p className="text-xs text-zinc-600">
+            No exercises logged in this session.
           </p>
         </div>
       )}

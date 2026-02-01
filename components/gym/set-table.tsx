@@ -1,3 +1,8 @@
+/**
+ * File: set-table.tsx
+ * Description: Editable table component for workout set logging.
+ */
+
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -33,7 +38,7 @@ export function SetTable({ sets, onUpdateSet, onRemoveSet }: SetTableProps) {
               <td className="py-2 pr-2">
                 <span className="text-sm text-zinc-400">{set.setNumber}</span>
               </td>
-              
+
               {/* Previous data (ghost text) */}
               <td className="py-2 px-2">
                 {set.previousWeight && set.previousReps ? (
@@ -44,7 +49,7 @@ export function SetTable({ sets, onUpdateSet, onRemoveSet }: SetTableProps) {
                   <span className="text-xs text-zinc-700">—</span>
                 )}
               </td>
-              
+
               {/* Weight input */}
               <td className="py-2 px-2">
                 <Input
@@ -62,7 +67,7 @@ export function SetTable({ sets, onUpdateSet, onRemoveSet }: SetTableProps) {
                   )}
                 />
               </td>
-              
+
               {/* Reps input */}
               <td className="py-2 px-2">
                 <Input
@@ -79,7 +84,7 @@ export function SetTable({ sets, onUpdateSet, onRemoveSet }: SetTableProps) {
                   )}
                 />
               </td>
-              
+
               {/* Completed checkbox */}
               <td className="py-2 px-2 text-center">
                 <Checkbox
@@ -90,7 +95,7 @@ export function SetTable({ sets, onUpdateSet, onRemoveSet }: SetTableProps) {
                   className="touch-target"
                 />
               </td>
-              
+
               {/* Delete button */}
               <td className="py-2 pl-2">
                 <Button

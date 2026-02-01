@@ -1,13 +1,14 @@
+/**
+ * File: history.service.ts
+ * Description: Service for managing unified timeline history of workouts and nutrition.
+ */
+
 import { WorkoutService } from "./workout.service";
 import { NutritionService } from "./nutrition.service";
 import { UserService } from "./user.service";
 import type { TimelineItem, TimelineFilter, Workout, DailyNutrition, User } from "@/lib/types";
-import { getToday } from "@/lib/utils";
 
 export const HistoryService = {
-  /**
-   * Get unified timeline with workouts and nutrition logs
-   */
   getUnifiedTimeline(filter: TimelineFilter = "all"): TimelineItem[] {
     const workouts = WorkoutService.getWorkouts().filter(
       (w) => w.status === "completed"
@@ -15,7 +16,6 @@ export const HistoryService = {
     const nutritionLogs = NutritionService.getNutritionLogs();
     const user = UserService.getUser();
 
-    // Convert workouts to timeline items
     const workoutItems: TimelineItem[] = workouts.map((w) => {
       const timestamp = this.getTimestamp(w.date, w.startTime);
       const prsHit = this.detectPRs(w);
@@ -32,7 +32,6 @@ export const HistoryService = {
       };
     });
 
-    // Convert nutrition logs to timeline items
     const nutritionItems: TimelineItem[] = nutritionLogs
       .filter((n) => n.totalCalories > 0)
       .map((n) => {
@@ -52,7 +51,6 @@ export const HistoryService = {
         };
       });
 
-    // Combine and filter
     let allItems: TimelineItem[] = [];
     if (filter === "all") {
       allItems = [...workoutItems, ...nutritionItems];
@@ -62,10 +60,8 @@ export const HistoryService = {
       allItems = nutritionItems;
     }
 
-    // Sort by timestamp (newest first)
     allItems.sort((a, b) => b.timestamp - a.timestamp);
 
-    // Mark perfect days for workout items
     const perfectDays = this.detectPerfectDays(allItems, user);
     allItems.forEach((item) => {
       if (perfectDays.has(item.date)) {
@@ -76,9 +72,6 @@ export const HistoryService = {
     return allItems;
   },
 
-  /**
-   * Calculate day score (0-100) based on workout and nutrition
-   */
   calculateDayScore(date: string, user: User): number {
     const workouts = WorkoutService.getWorkouts().filter(
       (w) => w.status === "completed" && w.date === date
@@ -87,12 +80,10 @@ export const HistoryService = {
 
     let score = 0;
 
-    // Check if workout completed (50 points)
     if (workouts.length > 0) {
       score += 50;
     }
 
-    // Check if calories hit target (50 points, within 10% tolerance)
     if (nutrition && nutrition.totalCalories > 0) {
       const target = user.calorieTarget;
       const tolerance = target * 0.1;
@@ -101,7 +92,6 @@ export const HistoryService = {
       if (diff <= tolerance) {
         score += 50;
       } else if (nutrition.totalCalories > 0) {
-        // Partial credit if logged but not perfect
         const percentage = Math.max(0, 1 - diff / target);
         score += Math.round(50 * percentage);
       }
@@ -110,9 +100,6 @@ export const HistoryService = {
     return score;
   },
 
-  /**
-   * Detect perfect days from timeline
-   */
   detectPerfectDays(timeline: TimelineItem[], user: User): Map<string, boolean> {
     const perfectDays = new Map<string, boolean>();
     const dates = new Set(timeline.map((item) => item.date));
@@ -125,9 +112,6 @@ export const HistoryService = {
     return perfectDays;
   },
 
-  /**
-   * Group timeline items by date
-   */
   groupTimelineByDate(timeline: TimelineItem[]): Map<string, TimelineItem[]> {
     const grouped = new Map<string, TimelineItem[]>();
 
@@ -139,7 +123,6 @@ export const HistoryService = {
       grouped.get(date)!.push(item);
     });
 
-    // Sort items within each date group by timestamp
     grouped.forEach((items) => {
       items.sort((a, b) => b.timestamp - a.timestamp);
     });
@@ -147,9 +130,6 @@ export const HistoryService = {
     return grouped;
   },
 
-  /**
-   * Get timestamp from date and optional time
-   */
   getTimestamp(date: string, time?: string): number {
     if (time) {
       return new Date(`${date}T${time}`).getTime();
@@ -157,9 +137,6 @@ export const HistoryService = {
     return new Date(date).getTime();
   },
 
-  /**
-   * Detect PRs (Personal Records) for a workout
-   */
   detectPRs(workout: Workout): string[] {
     const prs: string[] = [];
     const allWorkouts = WorkoutService.getWorkouts().filter(
@@ -174,7 +151,6 @@ export const HistoryService = {
 
       if (completedSets.length === 0) return;
 
-      // Find previous workouts with same exercise
       const previousWorkouts = allWorkouts
         .filter((w) => w.date < workout.date)
         .flatMap((w) =>
@@ -189,12 +165,10 @@ export const HistoryService = {
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
       if (previousWorkouts.length === 0) {
-        // First time doing this exercise = PR
         prs.push(`${exerciseName} (First Time)`);
         return;
       }
 
-      // Check for weight PRs
       const maxWeight = Math.max(...completedSets.map((s) => s.weight));
       const previousMaxWeight = Math.max(
         ...previousWorkouts.flatMap((p) => p.sets.map((s) => s.weight))
@@ -204,7 +178,6 @@ export const HistoryService = {
         prs.push(`${exerciseName}: ${maxWeight}kg (Weight PR)`);
       }
 
-      // Check for volume PRs
       const totalVolume = completedSets.reduce(
         (sum, s) => sum + s.weight * s.reps,
         0
@@ -223,11 +196,3 @@ export const HistoryService = {
     return prs;
   },
 };
-
-
-
-
-
-
-
-

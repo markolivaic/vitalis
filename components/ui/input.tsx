@@ -1,3 +1,8 @@
+/**
+ * File: input.tsx
+ * Description: Text input component with default and ghost variants.
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";

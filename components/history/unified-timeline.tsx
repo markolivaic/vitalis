@@ -1,3 +1,8 @@
+/**
+ * File: unified-timeline.tsx
+ * Description: Combined workout and nutrition history timeline component.
+ */
+
 "use client";
 
 import { useMemo } from "react";
@@ -38,12 +43,16 @@ export function UnifiedTimeline({
     return HistoryService.detectPerfectDays(entries, user);
   }, [entries, user]);
 
-  if (entries.length === 0) {
+  // Guard clause for null/undefined or empty entries
+  if (!entries || entries.length === 0) {
     return (
-      <GlassCard padding="lg" className="text-center">
-        <p className="text-zinc-500">No activity recorded yet</p>
+      <GlassCard padding="lg" className="text-center py-12">
+        <div className="text-zinc-600 mb-2 font-mono text-sm">[ NO DATA DETECTED ]</div>
+        <p className="text-zinc-500">
+          No activity recorded in system logs.
+        </p>
         <p className="text-sm text-zinc-600 mt-2">
-          Start logging workouts and meals to see your history
+          Initialize training or nutrition intake to populate timeline.
         </p>
       </GlassCard>
     );
@@ -238,7 +247,9 @@ function TimelineItem({
             {/* Mini Progress Bar */}
             <div className="pt-2">
               <Progress
-                value={Math.min((nutrition.totalCalories / user.calorieTarget) * 100, 100)}
+                value={user.calorieTarget > 0 
+                  ? Math.min((nutrition.totalCalories / user.calorieTarget) * 100, 100) 
+                  : 0}
                 variant="emerald"
                 className="h-1.5"
               />

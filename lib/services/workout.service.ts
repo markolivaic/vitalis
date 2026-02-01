@@ -1,3 +1,8 @@
+/**
+ * File: workout.service.ts
+ * Description: Service for managing workouts, routines, exercises, and active sessions.
+ */
+
 import type { Workout, WorkoutRoutine, WorkoutExercise, WorkoutSet, Exercise } from "@/lib/types";
 import { StorageService, STORAGE_KEYS } from "./storage.service";
 import {
@@ -8,7 +13,6 @@ import {
 import { generateId, getToday, formatTime } from "@/lib/utils";
 
 export const WorkoutService = {
-  // ===== EXERCISES =====
   getExercises(): Exercise[] {
     const exercises = StorageService.get<Exercise[]>(STORAGE_KEYS.EXERCISES);
     if (!exercises) {
@@ -22,7 +26,6 @@ export const WorkoutService = {
     return this.getExercises().find((ex) => ex.id === id);
   },
 
-  // ===== ROUTINES =====
   getRoutines(): WorkoutRoutine[] {
     const routines = StorageService.get<WorkoutRoutine[]>(STORAGE_KEYS.ROUTINES);
     if (!routines) {
@@ -36,7 +39,6 @@ export const WorkoutService = {
     return this.getRoutines().find((r) => r.id === id);
   },
 
-  // ===== WORKOUTS =====
   getWorkouts(): Workout[] {
     const workouts = StorageService.get<Workout[]>(STORAGE_KEYS.WORKOUTS);
     if (!workouts) {
@@ -66,26 +68,24 @@ export const WorkoutService = {
     return this.getWorkouts().find((w) => w.date === getToday());
   },
 
-  // Start a new workout
   startWorkout(routineId?: string): Workout {
     const routine = routineId ? this.getRoutineById(routineId) : undefined;
 
     const exercises: WorkoutExercise[] = routine
       ? routine.exercises.map((re) => ({
+        id: generateId(),
+        exerciseId: re.exerciseId,
+        exerciseName: re.exerciseName,
+        sets: Array.from({ length: re.targetSets }, (_, i) => ({
           id: generateId(),
-          exerciseId: re.exerciseId,
-          exerciseName: re.exerciseName,
-          sets: Array.from({ length: re.targetSets }, (_, i) => ({
-            id: generateId(),
-            setNumber: i + 1,
-            weight: 0,
-            reps: 0,
-            completed: false,
-            type: "normal" as const,
-            // Get previous workout data for this exercise
-            ...this.getPreviousSetData(re.exerciseId, i + 1),
-          })),
-        }))
+          setNumber: i + 1,
+          weight: 0,
+          reps: 0,
+          completed: false,
+          type: "normal" as const,
+          ...this.getPreviousSetData(re.exerciseId, i + 1),
+        })),
+      }))
       : [];
 
     const workout: Workout = {
@@ -99,25 +99,20 @@ export const WorkoutService = {
       exercises,
     };
 
-    // Save as active workout
     StorageService.set(STORAGE_KEYS.ACTIVE_WORKOUT, workout);
 
     return workout;
   },
 
-  // Get active workout
   getActiveWorkout(): Workout | null {
     return StorageService.get<Workout>(STORAGE_KEYS.ACTIVE_WORKOUT);
   },
 
-  // Update active workout
   updateActiveWorkout(workout: Workout): void {
-    // Recalculate total volume (exclude warmup sets)
     workout.totalVolume = workout.exercises.reduce((total, ex) => {
       return (
         total +
         ex.sets.reduce((setTotal, set) => {
-          // Only count completed sets that are NOT warmup
           if (set.completed && set.type !== "warmup") {
             return setTotal + set.weight * set.reps;
           }
@@ -129,7 +124,6 @@ export const WorkoutService = {
     StorageService.set(STORAGE_KEYS.ACTIVE_WORKOUT, workout);
   },
 
-  // Complete workout
   completeWorkout(): Workout | null {
     const activeWorkout = this.getActiveWorkout();
     if (!activeWorkout) return null;
@@ -143,23 +137,19 @@ export const WorkoutService = {
       ),
     };
 
-    // Add to workouts list
     const workouts = this.getWorkouts();
     workouts.unshift(completedWorkout);
     StorageService.set(STORAGE_KEYS.WORKOUTS, workouts);
 
-    // Clear active workout
     StorageService.remove(STORAGE_KEYS.ACTIVE_WORKOUT);
 
     return completedWorkout;
   },
 
-  // Cancel active workout
   cancelWorkout(): void {
     StorageService.remove(STORAGE_KEYS.ACTIVE_WORKOUT);
   },
 
-  // Add exercise to active workout
   addExerciseToWorkout(exerciseId: string): Workout | null {
     const activeWorkout = this.getActiveWorkout();
     if (!activeWorkout) return null;
@@ -190,7 +180,6 @@ export const WorkoutService = {
     return activeWorkout;
   },
 
-  // Add set to exercise
   addSetToExercise(workoutExerciseId: string): Workout | null {
     const activeWorkout = this.getActiveWorkout();
     if (!activeWorkout) return null;
@@ -215,7 +204,6 @@ export const WorkoutService = {
     return activeWorkout;
   },
 
-  // Update set
   updateSet(workoutExerciseId: string, setId: string, updates: Partial<WorkoutSet>): Workout | null {
     const activeWorkout = this.getActiveWorkout();
     if (!activeWorkout) return null;
@@ -232,7 +220,6 @@ export const WorkoutService = {
     return activeWorkout;
   },
 
-  // Remove set
   removeSet(workoutExerciseId: string, setId: string): Workout | null {
     const activeWorkout = this.getActiveWorkout();
     if (!activeWorkout) return null;
@@ -241,7 +228,6 @@ export const WorkoutService = {
     if (!exercise) return null;
 
     exercise.sets = exercise.sets.filter((s) => s.id !== setId);
-    // Renumber remaining sets
     exercise.sets.forEach((s, i) => {
       s.setNumber = i + 1;
     });
@@ -251,7 +237,6 @@ export const WorkoutService = {
     return activeWorkout;
   },
 
-  // Get previous set data for progressive overload
   getPreviousSetData(
     exerciseId: string,
     setNumber: number
@@ -274,7 +259,6 @@ export const WorkoutService = {
     return {};
   },
 
-  // Calculate total volume for a period
   getVolumeForPeriod(days: number): number {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
@@ -287,7 +271,6 @@ export const WorkoutService = {
       .reduce((total, w) => total + w.totalVolume, 0);
   },
 
-  // Update exercise note
   updateExerciseNote(workoutExerciseId: string, note: string): Workout | null {
     const activeWorkout = this.getActiveWorkout();
     if (!activeWorkout) return null;
@@ -301,7 +284,6 @@ export const WorkoutService = {
     return activeWorkout;
   },
 
-  // Update workout name
   updateWorkoutName(name: string): Workout | null {
     const activeWorkout = this.getActiveWorkout();
     if (!activeWorkout) return null;
@@ -312,7 +294,6 @@ export const WorkoutService = {
     return activeWorkout;
   },
 
-  // Update workout notes
   updateWorkoutNotes(notes: string): Workout | null {
     const activeWorkout = this.getActiveWorkout();
     if (!activeWorkout) return null;
@@ -323,4 +304,3 @@ export const WorkoutService = {
     return activeWorkout;
   },
 };
-

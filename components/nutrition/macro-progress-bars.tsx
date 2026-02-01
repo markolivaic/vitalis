@@ -1,3 +1,8 @@
+/**
+ * File: macro-progress-bars.tsx
+ * Description: Daily macronutrient progress visualization component.
+ */
+
 "use client";
 
 import { useMemo } from "react";

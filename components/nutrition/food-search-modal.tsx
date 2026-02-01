@@ -1,3 +1,8 @@
+/**
+ * File: food-search-modal.tsx
+ * Description: Modal for searching, selecting, and logging food items.
+ */
+
 "use client";
 
 import { useState } from "react";

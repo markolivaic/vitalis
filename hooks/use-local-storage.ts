@@ -1,9 +1,13 @@
+/**
+ * File: use-local-storage.ts
+ * Description: Custom React hook for persisting state to localStorage.
+ */
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
-  // State to store our value
   const [storedValue, setStoredValue] = useState<T>(initialValue);
   const [isLoaded, setIsLoaded] = useState(false);
 

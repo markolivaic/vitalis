@@ -1,3 +1,8 @@
+/**
+ * File: glass-card.tsx
+ * Description: Glassmorphism card component for the Void aesthetic.
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";

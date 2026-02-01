@@ -1,5 +1,7 @@
-// LocalStorage Service - Simulates database operations
-// Can be swapped for real API calls later
+/**
+ * File: storage.service.ts
+ * Description: LocalStorage abstraction layer for client-side data persistence.
+ */
 
 const isBrowser = typeof window !== "undefined";
 
@@ -36,7 +38,6 @@ export const StorageService = {
   clear(): void {
     if (!isBrowser) return;
     try {
-      // Only clear vitalis-prefixed keys
       const keysToRemove = Object.keys(localStorage).filter((key) =>
         key.startsWith("vitalis-")
       );
@@ -46,7 +47,6 @@ export const StorageService = {
     }
   },
 
-  // Check if data has been initialized
   isInitialized(): boolean {
     if (!isBrowser) return false;
     return localStorage.getItem("vitalis-initialized") === "true";
@@ -68,4 +68,3 @@ export const STORAGE_KEYS = {
   STREAKS: "vitalis-streaks",
   ACTIVE_WORKOUT: "vitalis-active-workout",
 } as const;
-

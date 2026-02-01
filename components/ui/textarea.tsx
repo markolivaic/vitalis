@@ -1,3 +1,8 @@
+/**
+ * File: textarea.tsx
+ * Description: Multi-line text input component with styling variants.
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -29,6 +34,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 Textarea.displayName = "Textarea";
 
 export { Textarea };
+
 
 
 

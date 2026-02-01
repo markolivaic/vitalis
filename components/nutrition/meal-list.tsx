@@ -1,3 +1,8 @@
+/**
+ * File: meal-list.tsx
+ * Description: Collapsible meal sections with food entry management.
+ */
+
 "use client";
 
 import { useState } from "react";
@@ -99,9 +104,11 @@ export function MealList({ meals, onAddFood, onRemoveEntry }: MealListProps) {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-zinc-600 text-center py-4">
-                  No items logged
-                </p>
+                <div className="text-center py-4">
+                  <p className="text-xs text-zinc-600">
+                    System fuel levels unknown. Log intake to monitor.
+                  </p>
+                </div>
               )}
             </div>
           </GlassCard>

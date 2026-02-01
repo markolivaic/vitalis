@@ -1,3 +1,8 @@
+/**
+ * File: exercise-card.tsx
+ * Description: Collapsible exercise card with set tracking for active workouts.
+ */
+
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";

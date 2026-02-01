@@ -1,3 +1,8 @@
+/**
+ * File: page.tsx
+ * Description: Unified activity history page with timeline view.
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";

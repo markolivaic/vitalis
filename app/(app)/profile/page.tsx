@@ -1,7 +1,22 @@
+/**
+ * File: page.tsx
+ * Description: User profile page with settings, targets, and account management.
+ */
+
 "use client";
 
-import { useEffect, useState } from "react";
-import { User as UserIcon, Trash2, RotateCcw, Save } from "lucide-react";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { signOut } from "next-auth/react";
+import {
+  User as UserIcon,
+  RotateCcw,
+  Save,
+  LogOut,
+  UserX,
+  AlertTriangle,
+  CheckCircle,
+} from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,46 +28,97 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UserService } from "@/lib/services/user.service";
 import { StorageService } from "@/lib/services/storage.service";
 import { AIService } from "@/lib/services/ai.service";
 import { WorkoutService } from "@/lib/services/workout.service";
 import { NutritionService } from "@/lib/services/nutrition.service";
-import type { User, AIInsight } from "@/lib/types";
+import type { AIInsight } from "@/lib/types";
+
+interface ProfileData {
+  id: string;
+  name: string;
+  email: string;
+  image: string | null;
+  age: number;
+  weight: number;
+  height: number;
+  gender: "male" | "female";
+  goal: "muscle" | "fat_loss" | "maintenance";
+  activityLevel: number;
+  calorieTarget: number;
+  proteinTarget: number;
+  carbsTarget: number;
+  fatsTarget: number;
+  createdAt: string;
+}
+
+interface ProfileFormData {
+  name: string;
+  age: number;
+  height: number;
+  weight: number;
+  gender: "male" | "female";
+  goal: "muscle" | "fat_loss" | "maintenance";
+  activityLevel: number;
+}
+
+async function fetchProfile(): Promise<ProfileData> {
+  const response = await fetch("/api/user/profile");
+  if (!response.ok) {
+    throw new Error("Failed to fetch profile");
+  }
+  const json = await response.json();
+  return json.data;
+}
+
+async function updateProfile(
+  data: ProfileFormData
+): Promise<{ data: ProfileData; meta: { bmr: number; tdee: number; goalModifier: string } }> {
+  const response = await fetch("/api/user/profile", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error("Failed to update profile");
+  }
+  return response.json();
+}
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
   const [insights, setInsights] = useState<AIInsight[]>([]);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProfileFormData>({
     name: "",
     age: 25,
     height: 170,
     weight: 70,
-    gender: "male" as "male" | "female",
-    goal: "maintenance" as "muscle" | "fat_loss" | "maintenance",
+    gender: "male",
+    goal: "maintenance",
     activityLevel: 1.55,
   });
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = () => {
-    try {
-      const userData = UserService.getUser();
-      setUser(userData);
+  // Fetch profile from API
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["user", "profile"],
+    queryFn: fetchProfile,
+    onSuccess: (data) => {
+      // Populate form when data loads
       setFormData({
-        name: userData.name,
-        age: userData.age,
-        height: userData.height,
-        weight: userData.weight,
-        gender: userData.gender,
-        goal: userData.goal,
-        activityLevel: userData.activityLevel,
+        name: data.name || "",
+        age: data.age,
+        height: data.height,
+        weight: data.weight,
+        gender: data.gender,
+        goal: data.goal,
+        activityLevel: data.activityLevel,
       });
 
       // Generate AI insights
@@ -61,7 +127,11 @@ export default function ProfilePage() {
       const recentWorkouts = WorkoutService.getRecentWorkouts(10);
 
       const context = {
-        user: userData,
+        user: {
+          ...data,
+          createdAt: data.createdAt,
+          updatedAt: new Date().toISOString(),
+        },
         todayNutrition,
         todayWorkout: todayWorkout || null,
         recentWorkouts,
@@ -70,24 +140,35 @@ export default function ProfilePage() {
 
       const aiInsights = AIService.generateInsights(context, 3);
       setInsights(aiInsights);
-    } catch (error) {
-      console.error("Error loading profile:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      const updated = UserService.updateUser(formData);
-      setUser(updated);
-      // Show success feedback
-      setTimeout(() => setIsSaving(false), 500);
-    } catch (error) {
+  // Mutation for profile updates
+  const mutation = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: (response) => {
+      // Update cache with new data
+      queryClient.setQueryData(["user", "profile"], response.data);
+
+      // Invalidate dashboard stats to reflect new targets
+      queryClient.invalidateQueries({ queryKey: ["dashboard", "stats"] });
+
+      // Show success message with new targets
+      setSuccessMessage(
+        `Targets updated: ${response.data.calorieTarget} kcal | ${response.data.proteinTarget}g protein | ${response.data.carbsTarget}g carbs | ${response.data.fatsTarget}g fats`
+      );
+
+      // Clear message after 5 seconds
+      setTimeout(() => setSuccessMessage(null), 5000);
+    },
+    onError: (error) => {
       console.error("Error saving profile:", error);
-      setIsSaving(false);
-    }
+      setSuccessMessage(null);
+    },
+  });
+
+  const handleSave = () => {
+    mutation.mutate(formData);
   };
 
   const handleResetData = () => {
@@ -101,12 +182,27 @@ export default function ProfilePage() {
     }
   };
 
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-white/20 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-zinc-500">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-sm text-zinc-500">
+            {error ? "Failed to load profile" : "Please sign in to continue"}
+          </p>
+          <Button variant="outline" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
         </div>
       </div>
     );
@@ -126,6 +222,14 @@ export default function ProfilePage() {
           </p>
         </div>
       </div>
+
+      {/* Success Message */}
+      {successMessage && (
+        <div className="flex items-center gap-3 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20 animate-fade-in">
+          <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+          <p className="text-sm text-emerald-300">{successMessage}</p>
+        </div>
+      )}
 
       {/* Profile Form */}
       <GlassCard padding="lg">
@@ -257,10 +361,10 @@ export default function ProfilePage() {
             variant="emerald"
             className="w-full gap-2"
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={mutation.isPending}
           >
             <Save className="w-4 h-4" />
-            {isSaving ? "Saving..." : "Save Changes"}
+            {mutation.isPending ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </GlassCard>
@@ -293,7 +397,6 @@ export default function ProfilePage() {
       {/* AI Insights */}
       <GlassCard padding="lg">
         <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-4">
-          {/* TODO: AI Integration - Replace with real AI responses */}
           AI Insights
         </h3>
         <div className="space-y-3">
@@ -327,21 +430,75 @@ export default function ProfilePage() {
         </div>
       </GlassCard>
 
-      {/* Danger Zone */}
-      <GlassCard padding="lg" className="border-red-500/20">
-        <h3 className="text-sm font-medium text-red-400 uppercase tracking-wider mb-4">
-          Danger Zone
-        </h3>
-        <p className="text-sm text-zinc-500 mb-4">
-          Reset all data including workouts, nutrition logs, and profile settings.
-          This action cannot be undone.
+      {/* Session & Security */}
+      <GlassCard padding="lg" className="border-white/10">
+        <div className="flex items-center gap-2 mb-4">
+          <AlertTriangle className="w-5 h-5 text-zinc-400" />
+          <h3 className="text-sm font-medium text-zinc-400 uppercase tracking-widest">
+            System Security & Access
+          </h3>
+        </div>
+
+        <p className="text-sm text-zinc-500 mb-6">
+          Manage your current session or permanently wipe all data from the Vitalis network.
         </p>
-        <Button variant="danger" className="gap-2" onClick={handleResetData}>
-          <RotateCcw className="w-4 h-4" />
-          Reset All Data
+
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Terminate Session
+          </Button>
+
+          <Button variant="danger" className="flex-1 gap-2" onClick={handleResetData}>
+            <RotateCcw className="w-4 h-4" />
+            Reset Local Data
+          </Button>
+        </div>
+      </GlassCard>
+
+      {/* Delete Account */}
+      <GlassCard padding="lg" className="border-red-500/20 bg-red-500/5">
+        <div className="flex items-center gap-2 mb-4">
+          <UserX className="w-5 h-5 text-red-500" />
+          <h3 className="text-sm font-medium text-red-500 uppercase tracking-widest">
+            Account Termination
+          </h3>
+        </div>
+
+        <p className="text-sm text-zinc-500 mb-6">
+          Permanently delete your account and all associated data from the Vitalis system.
+          This action is irreversible.
+        </p>
+
+        <Button
+          variant="danger"
+          className="w-full bg-red-500/10 border-red-500/20 text-red-500 hover:bg-red-500/20"
+          onClick={async () => {
+            const confirmed = confirm(
+              "WARNING: This action is irreversible. All bio-data and progress will be permanently erased. Proceed with termination?"
+            );
+            if (confirmed) {
+              try {
+                const res = await fetch("/api/user/delete", { method: "DELETE" });
+                if (res.ok) {
+                  signOut({ callbackUrl: "/login" });
+                } else {
+                  alert("Error during termination sequence.");
+                }
+              } catch (error) {
+                console.error(error);
+              }
+            }
+          }}
+        >
+          <UserX className="w-4 h-4 mr-2" />
+          Delete Account Permanently
         </Button>
       </GlassCard>
     </div>
   );
 }
-

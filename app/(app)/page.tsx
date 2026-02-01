@@ -1,120 +1,137 @@
+/**
+ * File: page.tsx
+ * Description: Main dashboard page with vitals, holographic body, and activity overview.
+ */
+
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { VitalTriad } from "@/components/dashboard/vital-triad";
 import { QuickCommandBar } from "@/components/dashboard/quick-command-bar";
 import { DailyTimeline } from "@/components/dashboard/daily-timeline";
 import { StreakGrid } from "@/components/dashboard/streak-grid";
 import { HolographicBody3D } from "@/components/dashboard/holographic-body-3d";
-import { UserService } from "@/lib/services/user.service";
-import { WorkoutService } from "@/lib/services/workout.service";
-import { NutritionService } from "@/lib/services/nutrition.service";
 import { AIService } from "@/lib/services/ai.service";
+import { NutritionService } from "@/lib/services/nutrition.service";
 import { useBodyStore } from "@/lib/stores/body.store";
-import { useNutritionStore } from "@/lib/stores/nutrition.store";
-import {
-  generateStreakData,
-  generateScheduledItems,
-} from "@/lib/mock-data";
-import type {
-  User,
-  DailyNutrition,
-  Workout,
-  AIInsight,
-  StreakDay,
-  ScheduledItem,
-} from "@/lib/types";
+import type { User, DailyNutrition, Workout, AIInsight } from "@/lib/types";
+
+async function fetchDashboardStats() {
+  const response = await fetch("/api/dashboard/stats");
+  if (!response.ok) {
+    throw new Error("Failed to fetch dashboard stats");
+  }
+  const json = await response.json();
+  return json.data;
+}
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [todayWorkout, setTodayWorkout] = useState<Workout | null>(null);
-  const [recoveryScore, setRecoveryScore] = useState(85);
-  const [aiInsight, setAiInsight] = useState<AIInsight | null>(null);
-  const [streaks, setStreaks] = useState<StreakDay[]>([]);
-  const [scheduledItems, setScheduledItems] = useState<ScheduledItem[]>([]);
-  const [bodyMessage, setBodyMessage] = useState("All systems nominal.");
-  const [isLoading, setIsLoading] = useState(true);
-  
-  // Use global body store
-  const bodyStatus = useBodyStore((state) => state.bodyStatus);
+  const queryClient = useQueryClient();
   const setBodyStatus = useBodyStore((state) => state.setBodyStatus);
-  
-  // Use nutrition store for real-time updates
-  const todayNutrition = useNutritionStore((state) => state.todayNutrition);
-  const loadTodayLog = useNutritionStore((state) => state.loadTodayLog);
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["dashboard", "stats"],
+    queryFn: fetchDashboardStats,
+  });
+
+  // Extract data from API response
+  const user: User | null = data?.user
+    ? {
+        id: data.user.id,
+        name: data.user.name,
+        age: data.user.age,
+        weight: data.user.weight,
+        height: data.user.height,
+        gender: data.user.gender,
+        goal: data.user.goal,
+        activityLevel: data.user.activityLevel,
+        calorieTarget: data.user.calorieTarget,
+        proteinTarget: data.user.proteinTarget,
+        carbsTarget: data.user.carbsTarget,
+        fatsTarget: data.user.fatsTarget,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+    : null;
+
+  const todayNutrition: DailyNutrition | null = data?.todayNutrition ?? null;
+  const todayWorkout: Workout | null = data?.todayWorkout ?? null;
+  const recentWorkouts: Workout[] = data?.recentWorkouts ?? [];
+
+  // Calculate AI insights and body status when data changes
+  const bodyStatus = useBodyStore((state) => state.bodyStatus);
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    if (!data?.user || !data?.recentWorkouts) return;
 
-  const loadDashboardData = () => {
-    try {
-      // Load user
-      const userData = UserService.getUser();
-      setUser(userData);
+    // Calculate body status from recent workouts
+    const workouts = data.recentWorkouts;
+    const calculatedBodyStatus = AIService.calculateBodyStatus(workouts);
+    setBodyStatus(calculatedBodyStatus);
 
-      // Load today's nutrition data via store
-      loadTodayLog();
+    // Update hologram with latest workout
+    if (workouts.length > 0) {
+      useBodyStore.getState().calculateFatigueFromWorkout(workouts[0]);
+    }
+  }, [data, setBodyStatus]);
 
-      const workoutData = WorkoutService.getTodayWorkout();
-      setTodayWorkout(workoutData || null);
-
-      // Load streaks
-      const streakData = generateStreakData();
-      setStreaks(streakData);
-
-      // Load schedule
-      const scheduleData = generateScheduledItems();
-      setScheduledItems(scheduleData);
-
-      // Get recent workouts for AI context
-      const recentWorkouts = WorkoutService.getRecentWorkouts(10);
-
-      // Calculate body status
-      const calculatedBodyStatus = AIService.calculateBodyStatus(recentWorkouts);
-      setBodyStatus(calculatedBodyStatus);
-
-      // Get body recommendation
-      const bodyRecommendation = AIService.getSuggestedTarget(calculatedBodyStatus);
-      setBodyMessage(bodyRecommendation);
-
-      // Generate AI insights with body status (use calculated status for context)
-      const nutritionData = useNutritionStore.getState().todayNutrition;
-      const context = {
-        user: userData,
-        todayNutrition: nutritionData,
-        todayWorkout: workoutData || null,
+  // Generate AI insights
+  const aiInsight: AIInsight | null = user
+    ? AIService.generateInsight({
+        user,
+        todayNutrition,
+        todayWorkout,
         recentWorkouts,
         weeklyCalories: NutritionService.getWeeklyCalories().map((d) => d.calories),
-        bodyStatus: calculatedBodyStatus, // Use calculated status for AI context
-      };
+        bodyStatus,
+      })
+    : null;
 
-      const insight = AIService.generateInsight(context);
-      setAiInsight(insight);
+  // Calculate recovery score
+  const recoveryScore = user
+    ? AIService.calculateRecoveryScore({
+        user,
+        todayNutrition,
+        todayWorkout,
+        recentWorkouts,
+        weeklyCalories: NutritionService.getWeeklyCalories().map((d) => d.calories),
+        bodyStatus,
+      })
+    : 85;
 
-      const recovery = AIService.calculateRecoveryScore(context);
-      setRecoveryScore(recovery);
-    } catch (error) {
-      console.error("Error loading dashboard data:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  // Get body recommendation
+  const bodyMessage = AIService.getSuggestedTarget(bodyStatus);
+
+  const handleSync = async () => {
+    await refetch();
+    queryClient.invalidateQueries({ queryKey: ["dashboard", "stats"] });
   };
 
-  const handleSync = () => {
-    setIsLoading(true);
-    // Simulate sync delay
-    setTimeout(() => {
-      loadDashboardData();
-    }, 500);
-  };
-
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-zinc-500">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <p className="text-sm text-zinc-500">
+            {error ? "Failed to load dashboard data" : "Please sign in to continue"}
+          </p>
+          <button
+            onClick={() => refetch()}
+            className="px-4 py-2 text-sm text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -156,22 +173,20 @@ export default function DashboardPage() {
 
           {/* Mission Control - Timeline & Streaks */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <DailyTimeline items={scheduledItems} />
-            <StreakGrid streaks={streaks} />
+            <DailyTimeline />
+            <StreakGrid />
           </div>
         </div>
 
         {/* Right Section - Holographic Body 3D (1 column on desktop) */}
         <div className="lg:col-span-1">
-          <HolographicBody3D 
-            aiMessage={bodyMessage}
-          />
+          <HolographicBody3D aiMessage={bodyMessage} />
         </div>
       </div>
 
       {/* Debug: Reset Body Button */}
-      <button 
-        onClick={() => useBodyStore.getState().resetBody()} 
+      <button
+        onClick={() => useBodyStore.getState().resetBody()}
         className="fixed bottom-4 right-4 z-50 px-3 py-2 rounded-lg bg-zinc-900/80 border border-white/10 text-[10px] text-zinc-400 hover:text-white hover:bg-zinc-800/80 transition-colors"
       >
         Reset Body

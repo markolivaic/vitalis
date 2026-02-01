@@ -1,3 +1,8 @@
+/**
+ * File: workout-summary-modal.tsx
+ * Description: Modal dialog displaying detailed workout session summary.
+ */
+
 "use client";
 
 import {
@@ -120,6 +125,7 @@ export function WorkoutSummaryModal({
     </Dialog>
   );
 }
+
 
 
 

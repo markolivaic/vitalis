@@ -1,3 +1,8 @@
+/**
+ * File: donut-chart.tsx
+ * Description: Reusable donut chart component with gradient support.
+ */
+
 "use client";
 
 import { cn } from "@/lib/utils";
@@ -73,7 +78,7 @@ export function DonutChart({
           </Pie>
         </PieChart>
       </ResponsiveContainer>
-      
+
       {(label || sublabel) && (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
           {label && (

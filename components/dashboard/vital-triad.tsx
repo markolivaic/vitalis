@@ -1,3 +1,8 @@
+/**
+ * File: vital-triad.tsx
+ * Description: Three-card dashboard widget showing fuel, output, and system status.
+ */
+
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";
@@ -22,12 +27,17 @@ export function VitalTriad({
 }: VitalTriadProps) {
   const caloriesConsumed = todayNutrition?.totalCalories || 0;
   const calorieTarget = user.calorieTarget;
+  const hasNutritionData = todayNutrition !== null && todayNutrition.totalCalories > 0;
 
   const workoutStatus = todayWorkout
     ? todayWorkout.status === "completed"
       ? todayWorkout.name
       : "In Progress"
-    : "Rest Day";
+    : "Awaiting Input";
+
+  const workoutSublabel = todayWorkout
+    ? `${todayWorkout.totalVolume.toLocaleString()} kg vol`
+    : "Initialize session to begin";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -44,8 +54,8 @@ export function VitalTriad({
           max={calorieTarget}
           variant="emerald"
           size="md"
-          label={`${caloriesConsumed}`}
-          sublabel={`/ ${calorieTarget} kcal`}
+          label={hasNutritionData ? `${caloriesConsumed}` : "---"}
+          sublabel={hasNutritionData ? `/ ${calorieTarget} kcal` : "System fuel levels unknown"}
         />
         <div className="mt-4 flex gap-4 text-xs text-zinc-500">
           <span>
@@ -74,7 +84,7 @@ export function VitalTriad({
           variant="violet"
           size="md"
           label={workoutStatus}
-          sublabel={todayWorkout ? `${todayWorkout.totalVolume} kg vol` : "No workout"}
+          sublabel={workoutSublabel}
         />
         {todayWorkout && todayWorkout.status === "completed" && (
           <div className="mt-4 text-xs text-zinc-500">
@@ -91,7 +101,7 @@ export function VitalTriad({
             System Status
           </span>
         </div>
-        
+
         {/* Recovery Score */}
         <div className="flex items-baseline gap-2 mb-4">
           <span className="text-3xl font-bold text-white">{recoveryScore}%</span>
@@ -109,20 +119,19 @@ export function VitalTriad({
         {/* Status Indicator */}
         <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/5">
           <div
-            className={`w-2 h-2 rounded-full ${
-              recoveryScore >= 80
+            className={`w-2 h-2 rounded-full ${recoveryScore >= 80
                 ? "bg-emerald-400"
                 : recoveryScore >= 50
-                ? "bg-amber-400"
-                : "bg-red-400"
-            } animate-pulse`}
+                  ? "bg-amber-400"
+                  : "bg-red-400"
+              } animate-pulse`}
           />
           <span className="text-xs text-zinc-500">
             {recoveryScore >= 80
               ? "Optimal"
               : recoveryScore >= 50
-              ? "Moderate"
-              : "Low"}
+                ? "Moderate"
+                : "Low"}
           </span>
         </div>
       </GlassCard>

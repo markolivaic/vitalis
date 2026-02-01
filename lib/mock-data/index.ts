@@ -1,3 +1,8 @@
+/**
+ * File: index.ts
+ * Description: Mock data generators and default values for development and seeding.
+ */
+
 import type {
   User,
   Exercise,
@@ -11,7 +16,6 @@ import type {
 } from "@/lib/types";
 import { generateId, getToday, getDaysAgo } from "@/lib/utils";
 
-// ===== DEFAULT USER =====
 export const defaultUser: User = {
   id: "user-1",
   name: "Alex",
@@ -20,7 +24,7 @@ export const defaultUser: User = {
   height: 178,
   weight: 75,
   goal: "muscle",
-  activityLevel: 1.55, // Moderate exercise
+  activityLevel: 1.55,
   calorieTarget: 2500,
   proteinTarget: 188,
   carbsTarget: 281,
@@ -29,58 +33,159 @@ export const defaultUser: User = {
   updatedAt: getToday(),
 };
 
-// ===== EXERCISE DATABASE =====
 export const exerciseDatabase: Exercise[] = [
-  // Chest
-  { id: "ex-1", name: "Bench Press", muscleGroup: "chest", equipment: "barbell" },
-  { id: "ex-2", name: "Incline Dumbbell Press", muscleGroup: "chest", equipment: "dumbbell" },
-  { id: "ex-3", name: "Cable Flyes", muscleGroup: "chest", equipment: "cable" },
-  { id: "ex-4", name: "Push-ups", muscleGroup: "chest", equipment: "bodyweight" },
-  
-  // Back
-  { id: "ex-5", name: "Deadlift", muscleGroup: "back", equipment: "barbell" },
-  { id: "ex-6", name: "Bent Over Row", muscleGroup: "back", equipment: "barbell" },
-  { id: "ex-7", name: "Lat Pulldown", muscleGroup: "back", equipment: "cable" },
-  { id: "ex-8", name: "Pull-ups", muscleGroup: "back", equipment: "bodyweight" },
-  { id: "ex-9", name: "Seated Cable Row", muscleGroup: "back", equipment: "cable" },
-  
-  // Shoulders
-  { id: "ex-10", name: "Overhead Press", muscleGroup: "shoulders", equipment: "barbell" },
-  { id: "ex-11", name: "Lateral Raises", muscleGroup: "shoulders", equipment: "dumbbell" },
-  { id: "ex-12", name: "Face Pulls", muscleGroup: "shoulders", equipment: "cable" },
-  
-  // Arms
-  { id: "ex-13", name: "Barbell Curl", muscleGroup: "biceps", equipment: "barbell" },
-  { id: "ex-14", name: "Hammer Curls", muscleGroup: "biceps", equipment: "dumbbell" },
-  { id: "ex-15", name: "Tricep Pushdown", muscleGroup: "triceps", equipment: "cable" },
-  { id: "ex-16", name: "Skull Crushers", muscleGroup: "triceps", equipment: "barbell" },
-  
-  // Legs
-  { id: "ex-17", name: "Squat", muscleGroup: "legs", equipment: "barbell" },
-  { id: "ex-18", name: "Romanian Deadlift", muscleGroup: "legs", equipment: "barbell" },
-  { id: "ex-19", name: "Leg Press", muscleGroup: "legs", equipment: "machine" },
-  { id: "ex-20", name: "Leg Curl", muscleGroup: "legs", equipment: "machine" },
-  { id: "ex-21", name: "Leg Extension", muscleGroup: "legs", equipment: "machine" },
-  { id: "ex-22", name: "Calf Raises", muscleGroup: "legs", equipment: "machine" },
-  
-  // Core
-  { id: "ex-23", name: "Plank", muscleGroup: "core", equipment: "bodyweight" },
-  { id: "ex-24", name: "Cable Crunches", muscleGroup: "core", equipment: "cable" },
-  { id: "ex-25", name: "Hanging Leg Raises", muscleGroup: "core", equipment: "bodyweight" },
+  // ===== CHEST (10 exercises) =====
+  { id: "ex-1", name: "Flat Bench Press", muscleGroup: "chest", equipment: "barbell" },
+  { id: "ex-2", name: "Incline Bench Press", muscleGroup: "chest", equipment: "barbell" },
+  { id: "ex-3", name: "Decline Bench Press", muscleGroup: "chest", equipment: "barbell" },
+  { id: "ex-4", name: "Dumbbell Chest Press", muscleGroup: "chest", equipment: "dumbbell" },
+  { id: "ex-5", name: "Incline Dumbbell Press", muscleGroup: "chest", equipment: "dumbbell" },
+  { id: "ex-6", name: "Dumbbell Flyes", muscleGroup: "chest", equipment: "dumbbell" },
+  { id: "ex-7", name: "Cable Crossover", muscleGroup: "chest", equipment: "cable" },
+  { id: "ex-8", name: "Pec Deck Machine", muscleGroup: "chest", equipment: "machine" },
+  { id: "ex-9", name: "Push-ups", muscleGroup: "chest", equipment: "bodyweight" },
+  { id: "ex-10", name: "Chest Dips", muscleGroup: "chest", equipment: "bodyweight" },
+
+  // ===== UPPER BACK (9 exercises) =====
+  { id: "ex-11", name: "Face Pulls", muscleGroup: "upper_back", equipment: "cable" },
+  { id: "ex-12", name: "Rear Delt Flyes", muscleGroup: "upper_back", equipment: "dumbbell" },
+  { id: "ex-13", name: "Barbell Shrugs", muscleGroup: "upper_back", equipment: "barbell" },
+  { id: "ex-14", name: "Dumbbell Shrugs", muscleGroup: "upper_back", equipment: "dumbbell" },
+  { id: "ex-15", name: "Cable Shrugs", muscleGroup: "upper_back", equipment: "cable" },
+  { id: "ex-16", name: "Reverse Pec Deck", muscleGroup: "upper_back", equipment: "machine" },
+  { id: "ex-17", name: "High Rope Face Pull", muscleGroup: "upper_back", equipment: "cable" },
+  { id: "ex-18", name: "Band Pull-Aparts", muscleGroup: "upper_back", equipment: "other" },
+  { id: "ex-19", name: "Prone Y-Raises", muscleGroup: "upper_back", equipment: "dumbbell" },
+
+  // ===== MIDDLE BACK (12 exercises) =====
+  { id: "ex-20", name: "Lat Pulldown", muscleGroup: "middle_back", equipment: "cable" },
+  { id: "ex-21", name: "Wide Grip Lat Pulldown", muscleGroup: "middle_back", equipment: "cable" },
+  { id: "ex-22", name: "Close Grip Lat Pulldown", muscleGroup: "middle_back", equipment: "cable" },
+  { id: "ex-23", name: "Seated Cable Row", muscleGroup: "middle_back", equipment: "cable" },
+  { id: "ex-24", name: "Single-Arm Cable Row", muscleGroup: "middle_back", equipment: "cable" },
+  { id: "ex-25", name: "T-Bar Row", muscleGroup: "middle_back", equipment: "barbell" },
+  { id: "ex-26", name: "Bent Over Barbell Row", muscleGroup: "middle_back", equipment: "barbell" },
+  { id: "ex-27", name: "Dumbbell Row", muscleGroup: "middle_back", equipment: "dumbbell" },
+  { id: "ex-28", name: "Chest Supported Row", muscleGroup: "middle_back", equipment: "dumbbell" },
+  { id: "ex-29", name: "Pull-ups", muscleGroup: "middle_back", equipment: "bodyweight" },
+  { id: "ex-30", name: "Chin-ups", muscleGroup: "middle_back", equipment: "bodyweight" },
+  { id: "ex-31", name: "Straight Arm Pulldown", muscleGroup: "middle_back", equipment: "cable" },
+
+  // ===== LOWER BACK (8 exercises) =====
+  { id: "ex-32", name: "Conventional Deadlift", muscleGroup: "lower_back", equipment: "barbell" },
+  { id: "ex-33", name: "Sumo Deadlift", muscleGroup: "lower_back", equipment: "barbell" },
+  { id: "ex-34", name: "Deficit Deadlift", muscleGroup: "lower_back", equipment: "barbell" },
+  { id: "ex-35", name: "Trap Bar Deadlift", muscleGroup: "lower_back", equipment: "barbell" },
+  { id: "ex-36", name: "Good Mornings", muscleGroup: "lower_back", equipment: "barbell" },
+  { id: "ex-37", name: "Back Extensions", muscleGroup: "lower_back", equipment: "bodyweight" },
+  { id: "ex-38", name: "Hyperextensions", muscleGroup: "lower_back", equipment: "machine" },
+  { id: "ex-39", name: "Reverse Hyperextensions", muscleGroup: "lower_back", equipment: "machine" },
+
+  // ===== SHOULDERS (11 exercises) =====
+  { id: "ex-40", name: "Overhead Press", muscleGroup: "shoulders", equipment: "barbell" },
+  { id: "ex-41", name: "Seated Dumbbell Press", muscleGroup: "shoulders", equipment: "dumbbell" },
+  { id: "ex-42", name: "Arnold Press", muscleGroup: "shoulders", equipment: "dumbbell" },
+  { id: "ex-43", name: "Lateral Raises", muscleGroup: "shoulders", equipment: "dumbbell" },
+  { id: "ex-44", name: "Cable Lateral Raises", muscleGroup: "shoulders", equipment: "cable" },
+  { id: "ex-45", name: "Front Raises", muscleGroup: "shoulders", equipment: "dumbbell" },
+  { id: "ex-46", name: "Upright Row", muscleGroup: "shoulders", equipment: "barbell" },
+  { id: "ex-47", name: "Machine Shoulder Press", muscleGroup: "shoulders", equipment: "machine" },
+  { id: "ex-48", name: "Behind Neck Press", muscleGroup: "shoulders", equipment: "barbell" },
+  { id: "ex-49", name: "Lu Raises", muscleGroup: "shoulders", equipment: "dumbbell" },
+  { id: "ex-50", name: "Landmine Press", muscleGroup: "shoulders", equipment: "barbell" },
+
+  // ===== BICEPS (9 exercises) =====
+  { id: "ex-51", name: "Barbell Curl", muscleGroup: "biceps", equipment: "barbell" },
+  { id: "ex-52", name: "EZ Bar Curl", muscleGroup: "biceps", equipment: "barbell" },
+  { id: "ex-53", name: "Preacher Curl", muscleGroup: "biceps", equipment: "barbell" },
+  { id: "ex-54", name: "Dumbbell Curl", muscleGroup: "biceps", equipment: "dumbbell" },
+  { id: "ex-55", name: "Hammer Curl", muscleGroup: "biceps", equipment: "dumbbell" },
+  { id: "ex-56", name: "Incline Dumbbell Curl", muscleGroup: "biceps", equipment: "dumbbell" },
+  { id: "ex-57", name: "Cable Curl", muscleGroup: "biceps", equipment: "cable" },
+  { id: "ex-58", name: "Concentration Curl", muscleGroup: "biceps", equipment: "dumbbell" },
+  { id: "ex-59", name: "Spider Curl", muscleGroup: "biceps", equipment: "dumbbell" },
+
+  // ===== TRICEPS (9 exercises) =====
+  { id: "ex-60", name: "Tricep Pushdown", muscleGroup: "triceps", equipment: "cable" },
+  { id: "ex-61", name: "Rope Pushdown", muscleGroup: "triceps", equipment: "cable" },
+  { id: "ex-62", name: "Overhead Tricep Extension", muscleGroup: "triceps", equipment: "cable" },
+  { id: "ex-63", name: "Skull Crushers", muscleGroup: "triceps", equipment: "barbell" },
+  { id: "ex-64", name: "Close Grip Bench Press", muscleGroup: "triceps", equipment: "barbell" },
+  { id: "ex-65", name: "Tricep Dips", muscleGroup: "triceps", equipment: "bodyweight" },
+  { id: "ex-66", name: "Diamond Push-ups", muscleGroup: "triceps", equipment: "bodyweight" },
+  { id: "ex-67", name: "Cable Kickbacks", muscleGroup: "triceps", equipment: "cable" },
+  { id: "ex-68", name: "Single Arm Pushdown", muscleGroup: "triceps", equipment: "cable" },
+
+  // ===== QUADS (9 exercises) =====
+  { id: "ex-69", name: "Back Squat", muscleGroup: "quads", equipment: "barbell" },
+  { id: "ex-70", name: "Front Squat", muscleGroup: "quads", equipment: "barbell" },
+  { id: "ex-71", name: "Hack Squat", muscleGroup: "quads", equipment: "machine" },
+  { id: "ex-72", name: "Leg Press", muscleGroup: "quads", equipment: "machine" },
+  { id: "ex-73", name: "Leg Extension", muscleGroup: "quads", equipment: "machine" },
+  { id: "ex-74", name: "Goblet Squat", muscleGroup: "quads", equipment: "dumbbell" },
+  { id: "ex-75", name: "Bulgarian Split Squat", muscleGroup: "quads", equipment: "dumbbell" },
+  { id: "ex-76", name: "Walking Lunges", muscleGroup: "quads", equipment: "dumbbell" },
+  { id: "ex-77", name: "Sissy Squat", muscleGroup: "quads", equipment: "bodyweight" },
+
+  // ===== HAMSTRINGS (7 exercises) =====
+  { id: "ex-78", name: "Lying Leg Curl", muscleGroup: "hamstrings", equipment: "machine" },
+  { id: "ex-79", name: "Seated Leg Curl", muscleGroup: "hamstrings", equipment: "machine" },
+  { id: "ex-80", name: "Nordic Curl", muscleGroup: "hamstrings", equipment: "bodyweight" },
+  { id: "ex-81", name: "Romanian Deadlift", muscleGroup: "hamstrings", equipment: "barbell" },
+  { id: "ex-82", name: "Stiff Leg Deadlift", muscleGroup: "hamstrings", equipment: "barbell" },
+  { id: "ex-83", name: "Single Leg Romanian Deadlift", muscleGroup: "hamstrings", equipment: "dumbbell" },
+  { id: "ex-84", name: "Glute Ham Raise", muscleGroup: "hamstrings", equipment: "machine" },
+
+  // ===== GLUTES (8 exercises) =====
+  { id: "ex-85", name: "Hip Thrust", muscleGroup: "glutes", equipment: "barbell" },
+  { id: "ex-86", name: "Barbell Hip Thrust", muscleGroup: "glutes", equipment: "barbell" },
+  { id: "ex-87", name: "Single Leg Hip Thrust", muscleGroup: "glutes", equipment: "bodyweight" },
+  { id: "ex-88", name: "Glute Kickback Machine", muscleGroup: "glutes", equipment: "machine" },
+  { id: "ex-89", name: "Cable Glute Kickback", muscleGroup: "glutes", equipment: "cable" },
+  { id: "ex-90", name: "Glute Bridge", muscleGroup: "glutes", equipment: "bodyweight" },
+  { id: "ex-91", name: "Sumo Squat", muscleGroup: "glutes", equipment: "dumbbell" },
+  { id: "ex-92", name: "Step-ups", muscleGroup: "glutes", equipment: "dumbbell" },
+
+  // ===== CALVES (6 exercises) =====
+  { id: "ex-93", name: "Standing Calf Raise", muscleGroup: "calves", equipment: "machine" },
+  { id: "ex-94", name: "Seated Calf Raise", muscleGroup: "calves", equipment: "machine" },
+  { id: "ex-95", name: "Donkey Calf Raise", muscleGroup: "calves", equipment: "machine" },
+  { id: "ex-96", name: "Single Leg Calf Raise", muscleGroup: "calves", equipment: "bodyweight" },
+  { id: "ex-97", name: "Leg Press Calf Raise", muscleGroup: "calves", equipment: "machine" },
+  { id: "ex-98", name: "Smith Machine Calf Raise", muscleGroup: "calves", equipment: "machine" },
+
+  // ===== CORE (10 exercises) =====
+  { id: "ex-99", name: "Plank", muscleGroup: "core", equipment: "bodyweight" },
+  { id: "ex-100", name: "Side Plank", muscleGroup: "core", equipment: "bodyweight" },
+  { id: "ex-101", name: "Hanging Leg Raise", muscleGroup: "core", equipment: "bodyweight" },
+  { id: "ex-102", name: "Cable Crunch", muscleGroup: "core", equipment: "cable" },
+  { id: "ex-103", name: "Ab Wheel Rollout", muscleGroup: "core", equipment: "other" },
+  { id: "ex-104", name: "Bicycle Crunch", muscleGroup: "core", equipment: "bodyweight" },
+  { id: "ex-105", name: "Dead Bug", muscleGroup: "core", equipment: "bodyweight" },
+  { id: "ex-106", name: "Pallof Press", muscleGroup: "core", equipment: "cable" },
+  { id: "ex-107", name: "Woodchoppers", muscleGroup: "core", equipment: "cable" },
+  { id: "ex-108", name: "Decline Sit-ups", muscleGroup: "core", equipment: "bodyweight" },
+
+  // ===== CARDIO (6 exercises) =====
+  { id: "ex-109", name: "Treadmill Running", muscleGroup: "cardio", equipment: "machine" },
+  { id: "ex-110", name: "Stationary Bike", muscleGroup: "cardio", equipment: "machine" },
+  { id: "ex-111", name: "Elliptical", muscleGroup: "cardio", equipment: "machine" },
+  { id: "ex-112", name: "Rowing Machine", muscleGroup: "cardio", equipment: "machine" },
+  { id: "ex-113", name: "Jump Rope", muscleGroup: "cardio", equipment: "other" },
+  { id: "ex-114", name: "Stair Climber", muscleGroup: "cardio", equipment: "machine" },
 ];
 
-// ===== WORKOUT ROUTINES =====
 export const defaultRoutines: WorkoutRoutine[] = [
   {
     id: "routine-push",
     name: "Push Day",
     color: "violet",
     exercises: [
-      { exerciseId: "ex-1", exerciseName: "Bench Press", targetSets: 4, targetReps: "6-8" },
-      { exerciseId: "ex-2", exerciseName: "Incline Dumbbell Press", targetSets: 3, targetReps: "8-10" },
-      { exerciseId: "ex-10", exerciseName: "Overhead Press", targetSets: 3, targetReps: "8-10" },
-      { exerciseId: "ex-11", exerciseName: "Lateral Raises", targetSets: 3, targetReps: "12-15" },
-      { exerciseId: "ex-15", exerciseName: "Tricep Pushdown", targetSets: 3, targetReps: "10-12" },
+      { exerciseId: "ex-1", exerciseName: "Flat Bench Press", targetSets: 4, targetReps: "6-8" },
+      { exerciseId: "ex-5", exerciseName: "Incline Dumbbell Press", targetSets: 3, targetReps: "8-10" },
+      { exerciseId: "ex-40", exerciseName: "Overhead Press", targetSets: 3, targetReps: "8-10" },
+      { exerciseId: "ex-43", exerciseName: "Lateral Raises", targetSets: 3, targetReps: "12-15" },
+      { exerciseId: "ex-60", exerciseName: "Tricep Pushdown", targetSets: 3, targetReps: "10-12" },
     ],
   },
   {
@@ -88,11 +193,11 @@ export const defaultRoutines: WorkoutRoutine[] = [
     name: "Pull Day",
     color: "emerald",
     exercises: [
-      { exerciseId: "ex-5", exerciseName: "Deadlift", targetSets: 4, targetReps: "5" },
-      { exerciseId: "ex-6", exerciseName: "Bent Over Row", targetSets: 4, targetReps: "6-8" },
-      { exerciseId: "ex-7", exerciseName: "Lat Pulldown", targetSets: 3, targetReps: "8-10" },
-      { exerciseId: "ex-12", exerciseName: "Face Pulls", targetSets: 3, targetReps: "15-20" },
-      { exerciseId: "ex-13", exerciseName: "Barbell Curl", targetSets: 3, targetReps: "10-12" },
+      { exerciseId: "ex-32", exerciseName: "Conventional Deadlift", targetSets: 4, targetReps: "5" },
+      { exerciseId: "ex-26", exerciseName: "Bent Over Barbell Row", targetSets: 4, targetReps: "6-8" },
+      { exerciseId: "ex-20", exerciseName: "Lat Pulldown", targetSets: 3, targetReps: "8-10" },
+      { exerciseId: "ex-11", exerciseName: "Face Pulls", targetSets: 3, targetReps: "15-20" },
+      { exerciseId: "ex-51", exerciseName: "Barbell Curl", targetSets: 3, targetReps: "10-12" },
     ],
   },
   {
@@ -100,20 +205,18 @@ export const defaultRoutines: WorkoutRoutine[] = [
     name: "Leg Day",
     color: "amber",
     exercises: [
-      { exerciseId: "ex-17", exerciseName: "Squat", targetSets: 4, targetReps: "6-8" },
-      { exerciseId: "ex-18", exerciseName: "Romanian Deadlift", targetSets: 3, targetReps: "8-10" },
-      { exerciseId: "ex-19", exerciseName: "Leg Press", targetSets: 3, targetReps: "10-12" },
-      { exerciseId: "ex-20", exerciseName: "Leg Curl", targetSets: 3, targetReps: "10-12" },
-      { exerciseId: "ex-22", exerciseName: "Calf Raises", targetSets: 4, targetReps: "12-15" },
+      { exerciseId: "ex-69", exerciseName: "Back Squat", targetSets: 4, targetReps: "6-8" },
+      { exerciseId: "ex-81", exerciseName: "Romanian Deadlift", targetSets: 3, targetReps: "8-10" },
+      { exerciseId: "ex-72", exerciseName: "Leg Press", targetSets: 3, targetReps: "10-12" },
+      { exerciseId: "ex-78", exerciseName: "Lying Leg Curl", targetSets: 3, targetReps: "10-12" },
+      { exerciseId: "ex-93", exerciseName: "Standing Calf Raise", targetSets: 4, targetReps: "12-15" },
     ],
   },
 ];
 
-// ===== SAMPLE WORKOUTS (Last 7 days) =====
 export const generateSampleWorkouts = (): Workout[] => {
   const workouts: Workout[] = [];
-  
-  // Push workout 2 days ago
+
   workouts.push({
     id: "workout-1",
     name: "Push Day",
@@ -128,7 +231,7 @@ export const generateSampleWorkouts = (): Workout[] => {
       {
         id: "we-1",
         exerciseId: "ex-1",
-        exerciseName: "Bench Press",
+        exerciseName: "Flat Bench Press",
         sets: [
           { id: "s1", setNumber: 1, weight: 80, reps: 8, completed: true, previousWeight: 77.5, previousReps: 8 },
           { id: "s2", setNumber: 2, weight: 80, reps: 7, completed: true, previousWeight: 77.5, previousReps: 7 },
@@ -138,7 +241,7 @@ export const generateSampleWorkouts = (): Workout[] => {
       },
       {
         id: "we-2",
-        exerciseId: "ex-2",
+        exerciseId: "ex-5",
         exerciseName: "Incline Dumbbell Press",
         sets: [
           { id: "s5", setNumber: 1, weight: 30, reps: 10, completed: true },
@@ -148,7 +251,7 @@ export const generateSampleWorkouts = (): Workout[] => {
       },
       {
         id: "we-3",
-        exerciseId: "ex-10",
+        exerciseId: "ex-40",
         exerciseName: "Overhead Press",
         sets: [
           { id: "s8", setNumber: 1, weight: 50, reps: 8, completed: true },
@@ -159,7 +262,6 @@ export const generateSampleWorkouts = (): Workout[] => {
     ],
   });
 
-  // Pull workout 4 days ago
   workouts.push({
     id: "workout-2",
     name: "Pull Day",
@@ -173,8 +275,8 @@ export const generateSampleWorkouts = (): Workout[] => {
     exercises: [
       {
         id: "we-4",
-        exerciseId: "ex-5",
-        exerciseName: "Deadlift",
+        exerciseId: "ex-32",
+        exerciseName: "Conventional Deadlift",
         sets: [
           { id: "s11", setNumber: 1, weight: 120, reps: 5, completed: true },
           { id: "s12", setNumber: 2, weight: 120, reps: 5, completed: true },
@@ -184,8 +286,8 @@ export const generateSampleWorkouts = (): Workout[] => {
       },
       {
         id: "we-5",
-        exerciseId: "ex-6",
-        exerciseName: "Bent Over Row",
+        exerciseId: "ex-26",
+        exerciseName: "Bent Over Barbell Row",
         sets: [
           { id: "s15", setNumber: 1, weight: 70, reps: 8, completed: true },
           { id: "s16", setNumber: 2, weight: 70, reps: 8, completed: true },
@@ -195,7 +297,6 @@ export const generateSampleWorkouts = (): Workout[] => {
     ],
   });
 
-  // Leg workout 5 days ago
   workouts.push({
     id: "workout-3",
     name: "Leg Day",
@@ -209,8 +310,8 @@ export const generateSampleWorkouts = (): Workout[] => {
     exercises: [
       {
         id: "we-6",
-        exerciseId: "ex-17",
-        exerciseName: "Squat",
+        exerciseId: "ex-69",
+        exerciseName: "Back Squat",
         sets: [
           { id: "s18", setNumber: 1, weight: 100, reps: 8, completed: true },
           { id: "s19", setNumber: 2, weight: 100, reps: 7, completed: true },
@@ -224,39 +325,29 @@ export const generateSampleWorkouts = (): Workout[] => {
   return workouts;
 };
 
-// ===== FOOD DATABASE =====
 export const foodDatabase: FoodItem[] = [
-  // Proteins
   { id: "food-1", name: "Chicken Breast", calories: 165, protein: 31, carbs: 0, fats: 3.6, servingSize: 100, servingUnit: "g" },
   { id: "food-2", name: "Salmon Fillet", calories: 208, protein: 20, carbs: 0, fats: 13, servingSize: 100, servingUnit: "g" },
   { id: "food-3", name: "Eggs (2 large)", calories: 156, protein: 13, carbs: 1, fats: 11, servingSize: 2, servingUnit: "eggs" },
   { id: "food-4", name: "Greek Yogurt", calories: 100, protein: 17, carbs: 6, fats: 0.7, servingSize: 170, servingUnit: "g" },
   { id: "food-5", name: "Whey Protein Shake", calories: 120, protein: 24, carbs: 3, fats: 1.5, servingSize: 1, servingUnit: "scoop" },
-  
-  // Carbs
   { id: "food-6", name: "White Rice", calories: 206, protein: 4, carbs: 45, fats: 0.4, servingSize: 158, servingUnit: "g" },
   { id: "food-7", name: "Oatmeal", calories: 158, protein: 6, carbs: 27, fats: 3, servingSize: 40, servingUnit: "g" },
   { id: "food-8", name: "Banana", calories: 105, protein: 1, carbs: 27, fats: 0.4, servingSize: 1, servingUnit: "medium" },
   { id: "food-9", name: "Sweet Potato", calories: 103, protein: 2, carbs: 24, fats: 0, servingSize: 114, servingUnit: "g" },
   { id: "food-10", name: "Whole Wheat Bread", calories: 81, protein: 4, carbs: 14, fats: 1, servingSize: 1, servingUnit: "slice" },
-  
-  // Fats
   { id: "food-11", name: "Almonds", calories: 164, protein: 6, carbs: 6, fats: 14, servingSize: 28, servingUnit: "g" },
   { id: "food-12", name: "Avocado", calories: 234, protein: 3, carbs: 12, fats: 21, servingSize: 0.5, servingUnit: "avocado" },
   { id: "food-13", name: "Olive Oil", calories: 119, protein: 0, carbs: 0, fats: 14, servingSize: 1, servingUnit: "tbsp" },
   { id: "food-14", name: "Peanut Butter", calories: 188, protein: 8, carbs: 6, fats: 16, servingSize: 2, servingUnit: "tbsp" },
-  
-  // Vegetables
   { id: "food-15", name: "Broccoli", calories: 55, protein: 4, carbs: 11, fats: 0.5, servingSize: 156, servingUnit: "g" },
   { id: "food-16", name: "Spinach", calories: 7, protein: 1, carbs: 1, fats: 0, servingSize: 30, servingUnit: "g" },
   { id: "food-17", name: "Mixed Salad", calories: 20, protein: 1, carbs: 4, fats: 0, servingSize: 100, servingUnit: "g" },
 ];
 
-// ===== SAMPLE NUTRITION (Last 7 days) =====
 export const generateSampleNutrition = (): DailyNutrition[] => {
   const nutrition: DailyNutrition[] = [];
-  
-  // Today's nutrition (partial)
+
   const todayMeals: Meal[] = [
     {
       id: "meal-1",
@@ -287,7 +378,7 @@ export const generateSampleNutrition = (): DailyNutrition[] => {
       totalFats: 6.3,
     },
   ];
-  
+
   nutrition.push({
     date: getToday(),
     meals: todayMeals,
@@ -297,7 +388,6 @@ export const generateSampleNutrition = (): DailyNutrition[] => {
     totalFats: 11.2,
   });
 
-  // Yesterday's nutrition (complete)
   const yesterdayMeals: Meal[] = [
     {
       id: "meal-3",
@@ -365,9 +455,8 @@ export const generateSampleNutrition = (): DailyNutrition[] => {
     totalFats: 66,
   });
 
-  // Generate more days with varying calories
   for (let i = 2; i <= 6; i++) {
-    const variation = Math.random() * 600 - 300; // -300 to +300
+    const variation = Math.random() * 600 - 300;
     nutrition.push({
       date: getDaysAgo(i),
       meals: [],
@@ -381,18 +470,17 @@ export const generateSampleNutrition = (): DailyNutrition[] => {
   return nutrition;
 };
 
-// ===== STREAK DATA =====
 export const generateStreakData = (): StreakDay[] => {
   const streaks: StreakDay[] = [];
-  
+
   for (let i = 13; i >= 0; i--) {
     const hasWorkout = Math.random() > 0.4;
     const hasNutrition = Math.random() > 0.2;
-    
+
     let activityLevel: 0 | 1 | 2 | 3 = 0;
     if (hasWorkout && hasNutrition) activityLevel = 3;
     else if (hasWorkout || hasNutrition) activityLevel = Math.random() > 0.5 ? 2 : 1;
-    
+
     streaks.push({
       date: getDaysAgo(i),
       activityLevel,
@@ -400,11 +488,10 @@ export const generateStreakData = (): StreakDay[] => {
       hasNutrition,
     });
   }
-  
+
   return streaks;
 };
 
-// ===== SCHEDULED ITEMS =====
 export const generateScheduledItems = (): ScheduledItem[] => {
   return [
     { id: "sched-1", type: "meal", title: "Breakfast", time: "08:00", status: "done" },
@@ -413,4 +500,3 @@ export const generateScheduledItems = (): ScheduledItem[] => {
     { id: "sched-4", type: "meal", title: "Dinner", time: "19:30", status: "pending" },
   ];
 };
-

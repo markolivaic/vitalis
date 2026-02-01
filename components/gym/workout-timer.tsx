@@ -1,3 +1,8 @@
+/**
+ * File: workout-timer.tsx
+ * Description: Real-time workout duration timer component.
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";

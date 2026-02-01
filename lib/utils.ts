@@ -1,3 +1,8 @@
+/**
+ * File: utils.ts
+ * Description: Utility functions for formatting, calculations, and common operations.
+ */
+
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -16,11 +21,10 @@ export function formatDate(date: Date | string): string {
 
 export function formatTime(date: Date | string): string {
   const d = new Date(date);
-  return d.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  });
+  const hours = d.getHours().toString().padStart(2, "0");
+  const minutes = d.getMinutes().toString().padStart(2, "0");
+  const seconds = d.getSeconds().toString().padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 export function formatDuration(seconds: number): string {
@@ -86,7 +90,6 @@ export function calculateBMR(
   age: number,
   gender: "male" | "female"
 ): number {
-  // Mifflin-St Jeor Equation
   if (gender === "male") {
     return Math.round(10 * weight + 6.25 * height - 5 * age + 5);
   }
@@ -101,7 +104,6 @@ export function calculateMacros(
   calories: number,
   goal: "muscle" | "fat_loss" | "maintenance"
 ): { protein: number; carbs: number; fats: number } {
-  // grams per day
   switch (goal) {
     case "muscle":
       return {
@@ -123,4 +125,3 @@ export function calculateMacros(
       };
   }
 }
-

@@ -1,12 +1,10 @@
+/**
+ * File: ai.service.ts
+ * Description: Rule-based AI engine for generating health insights and recommendations.
+ */
+
 import type { AIInsight, AIContext, Workout, BodyStatus } from "@/lib/types";
 import { generateId } from "@/lib/utils";
-
-// TODO: AI Integration - Replace rule engine with OpenAI API
-// This service uses a rule-based engine for now
-// To integrate real AI:
-// 1. Add OpenAI API key to environment variables
-// 2. Replace generateInsight() with API call passing AIContext
-// 3. Keep rule engine as fallback for offline/rate-limited scenarios
 
 interface RuleCondition {
   check: (context: AIContext) => boolean;
@@ -15,9 +13,7 @@ interface RuleCondition {
   context: string;
 }
 
-// Rule-based AI Engine
 const rules: RuleCondition[] = [
-  // Nutrition Rules
   {
     check: (ctx) => {
       if (!ctx.todayNutrition) return false;
@@ -55,8 +51,6 @@ const rules: RuleCondition[] = [
     type: "achievement",
     context: "nutrition",
   },
-
-  // Workout Rules
   {
     check: (ctx) => {
       if (ctx.recentWorkouts.length < 2) return false;
@@ -90,8 +84,6 @@ const rules: RuleCondition[] = [
     type: "achievement",
     context: "workout",
   },
-
-  // Recovery Rules
   {
     check: (ctx) => {
       const consecutiveWorkouts = getConsecutiveWorkoutDays(ctx.recentWorkouts);
@@ -101,15 +93,13 @@ const rules: RuleCondition[] = [
     type: "warning",
     context: "recovery",
   },
-
-  // Combined Rules
   {
     check: (ctx) => {
       const hadWorkoutToday = ctx.todayWorkout?.status === "completed";
-      const lowProtein = ctx.todayNutrition
+      const hasLowProtein = ctx.todayNutrition
         ? ctx.todayNutrition.totalProtein < ctx.user.proteinTarget * 0.6
         : false;
-      return hadWorkoutToday && lowProtein;
+      return hadWorkoutToday && hasLowProtein;
     },
     message: "You trained today but protein is low. Prioritize protein in your next meal.",
     type: "warning",
@@ -118,10 +108,10 @@ const rules: RuleCondition[] = [
   {
     check: (ctx) => {
       const hadWorkoutToday = ctx.todayWorkout?.status === "completed";
-      const goodProtein = ctx.todayNutrition
+      const hasGoodProtein = ctx.todayNutrition
         ? ctx.todayNutrition.totalProtein >= ctx.user.proteinTarget * 0.8
         : false;
-      return hadWorkoutToday && goodProtein;
+      return hadWorkoutToday && hasGoodProtein;
     },
     message: "Training + solid protein intake today. Gains loading...",
     type: "achievement",
@@ -129,7 +119,6 @@ const rules: RuleCondition[] = [
   },
 ];
 
-// Helper functions
 function isWithinDays(dateStr: string, days: number): boolean {
   const date = new Date(dateStr);
   const now = new Date();
@@ -176,10 +165,7 @@ function getConsecutiveWorkoutDays(workouts: Workout[]): number {
 }
 
 export const AIService = {
-  // Generate insight based on current context
-  // TODO: AI Integration - This method will call OpenAI API
   generateInsight(context: AIContext): AIInsight | null {
-    // Find first matching rule
     for (const rule of rules) {
       if (rule.check(context)) {
         return {
@@ -192,7 +178,6 @@ export const AIService = {
       }
     }
 
-    // Default insight if no rules match
     return {
       id: generateId(),
       type: "tip",
@@ -202,7 +187,6 @@ export const AIService = {
     };
   },
 
-  // Get multiple insights (for dashboard)
   generateInsights(context: AIContext, limit: number = 3): AIInsight[] {
     const insights: AIInsight[] = [];
 
@@ -219,7 +203,6 @@ export const AIService = {
       }
     }
 
-    // Add default if no insights
     if (insights.length === 0) {
       insights.push({
         id: generateId(),
@@ -233,26 +216,22 @@ export const AIService = {
     return insights;
   },
 
-  // Calculate recovery score (0-100)
   calculateRecoveryScore(context: AIContext): number {
     let score = 100;
 
-    // Deduct for consecutive training days
     const consecutive = getConsecutiveWorkoutDays(context.recentWorkouts);
     if (consecutive >= 5) score -= 20;
     else if (consecutive >= 3) score -= 10;
 
-    // Deduct for low protein
     if (context.todayNutrition) {
       const proteinRatio =
         context.todayNutrition.totalProtein / context.user.proteinTarget;
       if (proteinRatio < 0.5) score -= 15;
       else if (proteinRatio < 0.7) score -= 10;
     } else {
-      score -= 5; // No nutrition logged
+      score -= 5;
     }
 
-    // Deduct for caloric deficit (if muscle building)
     if (context.user.goal === "muscle" && context.todayNutrition) {
       const calorieRatio =
         context.todayNutrition.totalCalories / context.user.calorieTarget;
@@ -262,7 +241,6 @@ export const AIService = {
     return Math.max(0, Math.min(100, score));
   },
 
-  // Calculate body status based on recent workouts
   calculateBodyStatus(recentWorkouts: Workout[]): BodyStatus {
     const status: BodyStatus = {
       upperBody: "fresh",
@@ -271,20 +249,17 @@ export const AIService = {
       cardio: "fresh",
     };
 
-    // Check workouts within last 24-48 hours
     const now = new Date();
-    
+
     for (const workout of recentWorkouts) {
       if (workout.status !== "completed") continue;
-      
+
       const workoutDate = new Date(workout.date);
       const hoursAgo = (now.getTime() - workoutDate.getTime()) / (1000 * 60 * 60);
-      
-      // Within 24 hours = fatigued, 24-48 hours = recovering
+
       const workoutName = workout.name.toLowerCase();
-      
+
       if (hoursAgo <= 24) {
-        // Fatigued state
         if (workoutName.includes("push") || workoutName.includes("chest") || workoutName.includes("shoulder")) {
           status.upperBody = "fatigued";
         }
@@ -301,7 +276,6 @@ export const AIService = {
           status.cardio = "fatigued";
         }
       } else if (hoursAgo <= 48) {
-        // Recovering state (only if not already fatigued)
         if ((workoutName.includes("push") || workoutName.includes("pull") || workoutName.includes("chest") || workoutName.includes("back")) && status.upperBody === "fresh") {
           status.upperBody = "recovering";
         }
@@ -317,7 +291,6 @@ export const AIService = {
     return status;
   },
 
-  // Get suggested target muscle group based on body status
   getSuggestedTarget(bodyStatus: BodyStatus): string {
     if (bodyStatus.lowerBody === "fresh") return "Lower body is fresh - great day for legs!";
     if (bodyStatus.upperBody === "fresh") return "Upper body is fresh - perfect for push/pull!";
@@ -325,4 +298,3 @@ export const AIService = {
     return "Consider active recovery or light cardio today.";
   },
 };
-

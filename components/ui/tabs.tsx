@@ -1,3 +1,8 @@
+/**
+ * File: tabs.tsx
+ * Description: Tabbed navigation component built on Radix UI Tabs primitive.
+ */
+
 "use client";
 
 import * as TabsPrimitive from "@radix-ui/react-tabs";

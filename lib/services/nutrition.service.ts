@@ -1,10 +1,14 @@
+/**
+ * File: nutrition.service.ts
+ * Description: Service for managing nutrition data, food database, and meal logging.
+ */
+
 import type { DailyNutrition, Meal, MealEntry, FoodItem, MealType } from "@/lib/types";
 import { StorageService, STORAGE_KEYS } from "./storage.service";
 import { foodDatabase, generateSampleNutrition } from "@/lib/mock-data";
 import { generateId, getToday } from "@/lib/utils";
 
 export const NutritionService = {
-  // ===== FOOD DATABASE =====
   getFoods(): FoodItem[] {
     const foods = StorageService.get<FoodItem[]>(STORAGE_KEYS.FOODS);
     if (!foods) {
@@ -25,7 +29,6 @@ export const NutritionService = {
     );
   },
 
-  // Add custom food
   addCustomFood(food: Omit<FoodItem, "id">): FoodItem {
     const newFood: FoodItem = {
       ...food,
@@ -37,7 +40,6 @@ export const NutritionService = {
     return newFood;
   },
 
-  // ===== NUTRITION LOGS =====
   getNutritionLogs(): DailyNutrition[] {
     const logs = StorageService.get<DailyNutrition[]>(STORAGE_KEYS.NUTRITION);
     if (!logs) {
@@ -92,7 +94,6 @@ export const NutritionService = {
     return result;
   },
 
-  // Add food to meal
   addFoodToMeal(
     date: string,
     mealType: MealType,
@@ -152,7 +153,6 @@ export const NutritionService = {
     return dayLog;
   },
 
-  // Remove food from meal
   removeFoodFromMeal(date: string, mealType: MealType, entryId: string): DailyNutrition | null {
     const logs = this.getNutritionLogs();
     const dayLog = logs.find((l) => l.date === date);
@@ -170,7 +170,6 @@ export const NutritionService = {
     return dayLog;
   },
 
-  // Update serving size
   updateServings(
     date: string,
     mealType: MealType,
@@ -204,7 +203,6 @@ export const NutritionService = {
     return dayLog;
   },
 
-  // Helper: recalculate meal totals
   recalculateMealTotals(meal: Meal): void {
     meal.totalCalories = meal.entries.reduce((sum, e) => sum + e.calories, 0);
     meal.totalProtein = meal.entries.reduce((sum, e) => sum + e.protein, 0);
@@ -212,7 +210,6 @@ export const NutritionService = {
     meal.totalFats = meal.entries.reduce((sum, e) => sum + e.fats, 0);
   },
 
-  // Helper: recalculate day totals
   recalculateDayTotals(day: DailyNutrition): void {
     day.totalCalories = day.meals.reduce((sum, m) => sum + m.totalCalories, 0);
     day.totalProtein = day.meals.reduce((sum, m) => sum + m.totalProtein, 0);
@@ -220,7 +217,6 @@ export const NutritionService = {
     day.totalFats = day.meals.reduce((sum, m) => sum + m.totalFats, 0);
   },
 
-  // Quick add calories without searching for food
   quickAddCalories(
     date: string,
     mealType: MealType,
@@ -229,7 +225,6 @@ export const NutritionService = {
     carbs: number = 0,
     fats: number = 0
   ): DailyNutrition {
-    // Create a temporary food item for quick entry
     const quickFood: FoodItem = {
       id: `quick-${Date.now()}`,
       name: "Quick Entry",
@@ -241,7 +236,6 @@ export const NutritionService = {
       servingUnit: "serving",
     };
 
-    // Add it as a custom food temporarily (or just add directly to meal)
     const logs = this.getNutritionLogs();
     let dayLog = logs.find((l) => l.date === date);
 
@@ -292,4 +286,3 @@ export const NutritionService = {
     return dayLog;
   },
 };
-

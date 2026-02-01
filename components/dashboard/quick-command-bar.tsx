@@ -1,3 +1,8 @@
+/**
+ * File: quick-command-bar.tsx
+ * Description: Quick action bar for common dashboard operations.
+ */
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -18,18 +23,18 @@ export function QuickCommandBar({ onSync }: QuickCommandBarProps) {
           <span className="hidden sm:inline">Log Meal</span>
         </Button>
       </Link>
-      
+
       <div className="w-px h-8 bg-white/10" />
-      
+
       <Link href="/gym">
         <Button variant="ghost-glow" size="default" className="gap-2">
           <Dumbbell className="w-4 h-4" />
           <span className="hidden sm:inline">Start Workout</span>
         </Button>
       </Link>
-      
+
       <div className="w-px h-8 bg-white/10" />
-      
+
       <Button
         variant="ghost-glow"
         size="default"

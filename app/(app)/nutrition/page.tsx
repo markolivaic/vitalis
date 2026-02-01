@@ -1,3 +1,8 @@
+/**
+ * File: page.tsx
+ * Description: Nutrition tracking page with meal logging and weekly overview.
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";

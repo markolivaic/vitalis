@@ -1,3 +1,8 @@
+/**
+ * File: select.tsx
+ * Description: Dropdown select component built on Radix UI Select primitive.
+ */
+
 "use client";
 
 import * as SelectPrimitive from "@radix-ui/react-select";

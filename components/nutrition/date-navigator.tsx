@@ -1,3 +1,8 @@
+/**
+ * File: date-navigator.tsx
+ * Description: Date selection navigation component for nutrition tracking.
+ */
+
 "use client";
 
 import { Button } from "@/components/ui/button";

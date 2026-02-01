@@ -1,3 +1,8 @@
+/**
+ * File: body.store.ts
+ * Description: Zustand store for managing body muscle status and fatigue calculations.
+ */
+
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { BodyStatus, MuscleStatus, Workout } from "@/lib/types";
@@ -35,21 +40,48 @@ export const useBodyStore = create<BodyState>()(
       resetBody: () => set({ bodyStatus: defaultBodyStatus }),
 
       calculateFatigueFromWorkout: (workout) => {
-        console.log("⚡ CALCULATING FATIGUE FOR WORKOUT:", workout.name);
-        
-        // Start with current status
+        console.log("Calculating fatigue for workout:", workout.name);
+
         const newStatus = { ...get().bodyStatus };
         let hasChanges = false;
 
-        // Keywords mapping
         const keywords = {
-          upperBody: ["chest", "bench", "press", "push", "fly", "shoulder", "deltoid", "raise", "bicep", "tricep", "curl", "extension", "row", "pull", "lat", "chin", "dip"],
-          lowerBody: ["leg", "squat", "deadlift", "lunge", "hinge", "calf", "glute", "hamstring", "quad", "press"],
-          core: ["ab", "crunch", "plank", "sit", "core", "oblique"],
-          cardio: ["run", "treadmill", "bike", "cycle", "elliptical", "rowing", "jump", "cardio"]
+          upperBody: [
+            // Chest
+            "chest", "bench", "fly", "pec", "crossover",
+            // Upper Back (traps, rear delts)
+            "shrug", "face pull", "rear delt", "trap", "y-raise", "pull-apart",
+            // Middle Back (lats, rhomboids)
+            "row", "pull", "lat", "chin", "pulldown",
+            // Shoulders
+            "shoulder", "deltoid", "raise", "overhead", "arnold", "upright", "landmine",
+            // Biceps
+            "bicep", "curl", "preacher", "hammer", "spider",
+            // Triceps
+            "tricep", "pushdown", "skull", "kickback", "dip", "diamond"
+          ],
+          lowerBody: [
+            // Quads
+            "squat", "leg press", "leg extension", "lunge", "split squat", "hack", "goblet", "sissy",
+            // Hamstrings
+            "leg curl", "romanian", "stiff leg", "nordic", "glute ham",
+            // Glutes
+            "glute", "hip thrust", "bridge", "step-up", "sumo",
+            // Calves
+            "calf", "calves",
+            // Lower Back
+            "deadlift", "good morning", "back extension", "hyperextension"
+          ],
+          core: [
+            "ab", "crunch", "plank", "sit-up", "core", "oblique",
+            "pallof", "dead bug", "woodchop", "rollout", "leg raise"
+          ],
+          cardio: [
+            "run", "treadmill", "bike", "cycle", "elliptical",
+            "rowing", "jump", "cardio", "stair", "rope"
+          ]
         };
 
-        // Analyze exercises
         workout.exercises.forEach((exercise) => {
           const name = exercise.exerciseName.toLowerCase();
           console.log("Analyzing exercise:", name);
@@ -57,35 +89,35 @@ export const useBodyStore = create<BodyState>()(
           if (keywords.upperBody.some(k => name.includes(k))) {
             newStatus.upperBody = "fatigued";
             hasChanges = true;
-            console.log("-> Upper Body Hit");
+            console.log("Upper body targeted");
           }
           if (keywords.lowerBody.some(k => name.includes(k))) {
             newStatus.lowerBody = "fatigued";
             hasChanges = true;
-            console.log("-> Lower Body Hit");
+            console.log("Lower body targeted");
           }
           if (keywords.core.some(k => name.includes(k))) {
             newStatus.core = "fatigued";
             hasChanges = true;
-            console.log("-> Core Hit");
+            console.log("Core targeted");
           }
           if (keywords.cardio.some(k => name.includes(k))) {
             newStatus.cardio = "fatigued";
             hasChanges = true;
-            console.log("-> Cardio Hit");
+            console.log("Cardio targeted");
           }
         });
 
         if (hasChanges) {
-          console.log("✅ UPDATING BODY STATUS:", newStatus);
+          console.log("Updating body status:", newStatus);
           set({ bodyStatus: newStatus });
         } else {
-          console.warn("⚠️ NO MATCHING MUSCLES FOUND. Check keywords.");
+          console.warn("No matching muscle groups found");
         }
       },
     }),
     {
-      name: "vitalis-body-storage", // Unique name for LocalStorage
+      name: "vitalis-body-storage",
       storage: createJSONStorage(() => localStorage),
     }
   )

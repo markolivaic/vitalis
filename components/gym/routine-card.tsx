@@ -1,3 +1,8 @@
+/**
+ * File: routine-card.tsx
+ * Description: Workout routine display card with exercise preview and start action.
+ */
+
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";

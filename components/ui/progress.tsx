@@ -1,3 +1,8 @@
+/**
+ * File: progress.tsx
+ * Description: Animated progress bar component with color variants.
+ */
+
 "use client";
 
 import * as ProgressPrimitive from "@radix-ui/react-progress";

@@ -1,3 +1,8 @@
+/**
+ * File: active-session-view.tsx
+ * Description: Active workout session view with exercise tracking and set logging.
+ */
+
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -29,22 +34,20 @@ import { Textarea } from "@/components/ui/textarea";
 
 export function ActiveSessionView() {
   const router = useRouter();
-  
-  // Destrukturiramo state selektivno da izbjegnemo nepotrebne re-rendere
+
   const status = useWorkoutStore(state => state.status);
   const elapsedSeconds = useWorkoutStore(state => state.elapsedSeconds);
   const activeRoutine = useWorkoutStore(state => state.activeRoutine);
   const updateElapsedTime = useWorkoutStore(state => state.updateElapsedTime);
-  
-  // Actions ne izazivaju re-render, pa ih možemo uzeti direktno
-  const { 
-    finishWorkout, 
-    cancelWorkout, 
-    logSet, 
+
+  const {
+    finishWorkout,
+    cancelWorkout,
+    logSet,
     updateSetCompleted,
     updateSetType,
     updateExerciseNote,
-  } = useWorkoutStore.getState(); 
+  } = useWorkoutStore.getState();
 
   const [showAddExercise, setShowAddExercise] = useState(false);
   const [showFinishModal, setShowFinishModal] = useState(false);
@@ -53,11 +56,9 @@ export function ActiveSessionView() {
   const [workoutNotes, setWorkoutNotes] = useState("");
   const [exerciseNotes, setExerciseNotes] = useState<Record<string, string>>({});
   const initializedRef = useRef(false);
-  
-  // FIX 1: Lazy initialization za vježbe (rješava useEffect error)
+
   const [availableExercises] = useState(() => WorkoutService.getExercises());
 
-  // Timer effect
   useEffect(() => {
     if (status === "active") {
       const interval = setInterval(() => {
@@ -67,17 +68,16 @@ export function ActiveSessionView() {
     }
   }, [status, updateElapsedTime]);
 
-  // Initialize workout on mount
   useEffect(() => {
     if (initializedRef.current) return;
-    
+
     const active = WorkoutService.getActiveWorkout();
     const currentStore = useWorkoutStore.getState();
-    
+
     if (active && !currentStore.activeRoutine) {
       const startTime = new Date(`${active.date}T${active.startTime}`).getTime();
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
-      
+
       useWorkoutStore.setState({
         status: "active",
         activeRoutine: active,
@@ -91,12 +91,10 @@ export function ActiveSessionView() {
     }
   }, [router]);
 
-  // Initialize workout name when activeRoutine changes
   useEffect(() => {
     if (activeRoutine) {
       setWorkoutName(activeRoutine.name);
       setWorkoutNotes(activeRoutine.notes || "");
-      // Initialize exercise notes
       const notes: Record<string, string> = {};
       activeRoutine.exercises.forEach((ex) => {
         if (ex.notes) notes[ex.id] = ex.notes;
@@ -131,34 +129,30 @@ export function ActiveSessionView() {
     }
   };
 
-  // FIX 2: Optimizirani handler za unos (sprječava gubitak fokusa)
   const handleUpdateSet = useCallback((
     exerciseId: string,
     setId: string,
     field: 'weight' | 'reps',
     value: string
   ) => {
-    // Odmah ažuriraj store, ali nemoj čekati re-render za input
     const numValue = parseFloat(value) || 0;
-    
-    // Dohvatimo trenutni set da ne brišemo druge vrijednosti
+
     const currentWorkout = useWorkoutStore.getState().activeRoutine;
     const exercise = currentWorkout?.exercises.find(e => e.id === exerciseId);
     const set = exercise?.sets.find(s => s.id === setId);
-    
+
     if (set) {
       logSet(
-        exerciseId, 
-        setId, 
-        field === 'weight' ? numValue : set.weight, 
+        exerciseId,
+        setId,
+        field === 'weight' ? numValue : set.weight,
         field === 'reps' ? numValue : set.reps
       );
     }
   }, [logSet]);
 
-  // Handler za checkbox
-  const handleToggleSet = (exerciseId: string, setId: string, checked: boolean) => {
-    updateSetCompleted(exerciseId, setId, checked);
+  const handleToggleSet = (exerciseId: string, setId: string, isChecked: boolean) => {
+    updateSetCompleted(exerciseId, setId, isChecked);
   };
 
   const handleAddSet = (exerciseId: string) => {
@@ -180,17 +174,16 @@ export function ActiveSessionView() {
     updateExerciseNote(exerciseId, note);
   };
 
-  // Calculate stats for finish modal
   const getWorkoutStats = () => {
     if (!activeRoutine) return { volume: 0, exercises: 0, completedSets: 0 };
-    
+
     const volume = activeRoutine.totalVolume;
     const exercises = activeRoutine.exercises.length;
     const completedSets = activeRoutine.exercises.reduce(
       (sum, ex) => sum + ex.sets.filter((s) => s.completed && s.type !== "warmup").length,
       0
     );
-    
+
     return { volume, exercises, completedSets };
   };
 
@@ -204,7 +197,6 @@ export function ActiveSessionView() {
 
   return (
     <div className="flex flex-col h-screen bg-black overflow-hidden">
-      {/* Header */}
       <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10 px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex-1">
@@ -225,18 +217,11 @@ export function ActiveSessionView() {
         </div>
       </div>
 
-      {/* List */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
         {activeRoutine.exercises.map((exercise) => (
           <GlassCard key={exercise.id} padding="md" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">{exercise.exerciseName}</h3>
-              <Button variant="ghost" size="sm" onClick={() => handleAddSet(exercise.id)} className="text-zinc-400 hover:text-white">
-                <Plus className="w-4 h-4 mr-2" /> Set
-              </Button>
-            </div>
-            
-            {/* Exercise Notes */}
+            <h3 className="text-lg font-bold text-white">{exercise.exerciseName}</h3>
+
             <Textarea
               variant="ghost"
               placeholder="Seat height: 4, Grip width: wide..."
@@ -244,7 +229,6 @@ export function ActiveSessionView() {
               onChange={(e) => handleExerciseNoteChange(exercise.id, e.target.value)}
               className="text-sm min-h-[60px]"
               onBlur={() => {
-                // Ensure note is saved
                 if (exerciseNotes[exercise.id] !== undefined) {
                   updateExerciseNote(exercise.id, exerciseNotes[exercise.id] || "");
                 }
@@ -258,7 +242,7 @@ export function ActiveSessionView() {
                     <th className="text-left py-2 w-16">Set</th>
                     <th className="text-left py-2 w-20">Kg</th>
                     <th className="text-left py-2 w-20">Reps</th>
-                    <th className="text-center py-2 w-12">✓</th>
+                    <th className="text-center py-2 w-12">Done</th>
                     <th className="w-8"></th>
                   </tr>
                 </thead>
@@ -266,7 +250,7 @@ export function ActiveSessionView() {
                   {exercise.sets.map((set) => {
                     const setType = set.type || "normal";
                     const isWarmup = setType === "warmup";
-                    
+
                     return (
                       <tr
                         key={set.id}
@@ -275,7 +259,6 @@ export function ActiveSessionView() {
                           isWarmup && "opacity-60"
                         )}
                       >
-                        {/* Set Type Selector */}
                         <td className="py-2">
                           <Select
                             value={setType}
@@ -342,11 +325,8 @@ export function ActiveSessionView() {
                         <Input
                           variant="ghost"
                           type="number"
-                          // Koristimo defaultValue ili kontrolirani value ali pažljivo
                           defaultValue={set.weight || ""}
                           placeholder="0"
-                          // OnBlur umjesto OnChange za bolje performanse (opcionalno)
-                          // Ali ovdje koristimo OnChange s optimizacijom
                           onChange={(e) => handleUpdateSet(exercise.id, set.id, 'weight', e.target.value)}
                           className="w-16 h-10 text-center text-lg bg-transparent border-b border-white/20 focus:border-emerald-500"
                         />
@@ -379,13 +359,21 @@ export function ActiveSessionView() {
                 </tbody>
               </table>
             </div>
+
+            <button
+              onClick={() => handleAddSet(exercise.id)}
+              className="w-full py-3 border border-dashed border-white/10 rounded-lg text-zinc-500 hover:text-zinc-300 hover:border-white/20 transition-colors flex items-center justify-center gap-2 text-sm"
+            >
+              <Plus className="w-4 h-4" />
+              Add Set
+            </button>
           </GlassCard>
         ))}
 
         <div className="pt-4 pb-20">
-          <Button 
-            variant="outline" 
-            className="w-full h-14 border-dashed border-white/20 hover:border-emerald-500/50 hover:bg-emerald-500/10 text-zinc-400 hover:text-emerald-400"
+          <Button
+            variant="emerald"
+            className="w-full h-14"
             onClick={() => setShowAddExercise(true)}
           >
             <Plus className="w-5 h-5 mr-2" />
@@ -402,8 +390,8 @@ export function ActiveSessionView() {
             </DialogHeader>
             <div className="relative mt-4">
               <Search className="absolute left-3 top-3 w-4 h-4 text-zinc-500" />
-              <Input 
-                placeholder="Search..." 
+              <Input
+                placeholder="Search..."
                 className="pl-9 bg-black/50 border-white/10"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -429,7 +417,6 @@ export function ActiveSessionView() {
         </DialogContent>
       </Dialog>
 
-      {/* Finish Workout Modal */}
       <Dialog open={showFinishModal} onOpenChange={setShowFinishModal}>
         <DialogContent className="max-w-md bg-zinc-900 border-white/10">
           <DialogHeader>
@@ -437,7 +424,6 @@ export function ActiveSessionView() {
           </DialogHeader>
 
           <div className="space-y-4 mt-4">
-            {/* Workout Name */}
             <div>
               <label className="text-sm text-zinc-400 mb-2 block">Workout Name</label>
               <Input
@@ -448,7 +434,6 @@ export function ActiveSessionView() {
               />
             </div>
 
-            {/* Workout Notes */}
             <div>
               <label className="text-sm text-zinc-400 mb-2 block">Workout Notes</label>
               <Textarea
@@ -459,7 +444,6 @@ export function ActiveSessionView() {
               />
             </div>
 
-            {/* Stats Summary */}
             <GlassCard padding="md" className="bg-white/5">
               <div className="grid grid-cols-3 gap-4 text-center">
                 <div>
@@ -477,7 +461,6 @@ export function ActiveSessionView() {
               </div>
             </GlassCard>
 
-            {/* Footer Actions */}
             <div className="flex gap-3 pt-4">
               <Button
                 variant="ghost"

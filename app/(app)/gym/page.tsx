@@ -1,3 +1,8 @@
+/**
+ * File: page.tsx
+ * Description: Gym hub page with routines, recent workouts, and workout initiation.
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";

@@ -1,3 +1,8 @@
+/**
+ * File: weekly-chart.tsx
+ * Description: Weekly calorie intake bar chart visualization.
+ */
+
 "use client";
 
 import { GlassCard } from "@/components/ui/glass-card";
